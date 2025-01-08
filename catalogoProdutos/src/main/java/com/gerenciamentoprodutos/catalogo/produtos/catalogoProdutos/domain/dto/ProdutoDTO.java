@@ -1,4 +1,4 @@
-package com.gerenciamentoprodutos.catalogo.produtos.catalogoProdutos.dto;
+package com.gerenciamentoprodutos.catalogo.produtos.catalogoProdutos.domain.dto;
 
 public record ProdutoDTO(
     long Id,

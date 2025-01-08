@@ -1,4 +1,4 @@
-package com.gerenciamentoprodutos.catalogo.produtos.catalogoProdutos.entities;
+package com.gerenciamentoprodutos.catalogo.produtos.catalogoProdutos.infrastructure.entityjpa;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class ProdutoEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String descricao;
     private long preco;
