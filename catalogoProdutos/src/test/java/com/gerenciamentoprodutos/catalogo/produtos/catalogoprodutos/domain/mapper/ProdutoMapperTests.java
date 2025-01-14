@@ -1,7 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutoEntity;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -25,7 +25,7 @@ class ProdutoMapperTests {
         BigDecimal precoTeste = new BigDecimal("21.76");
         long quantidadeEstoqueTeste = 300;
 
-        ProdutoEntity produto = new ProdutoEntity();
+        ProdutosEntity produto = new ProdutosEntity();
         produto.setId(idTeste);
         produto.setDescricao(descTeste);
         produto.setPreco(precoTeste);

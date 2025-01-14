@@ -2,7 +2,7 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapp
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutoEntity;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,5 +12,5 @@ public interface IProdutoMapper {
     @Mapping(source = "entity.descricao", target = "Descricao")
     @Mapping(source = "entity.preco", target = "Preco")
     @Mapping(source = "entity.quantidadeEstoque", target = "QuantidadeEstoque")
-    ProdutoDTO toDTO(ProdutoEntity produto);
+    ProdutoDTO toDTO(ProdutosEntity produto);
 }

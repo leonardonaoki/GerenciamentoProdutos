@@ -6,11 +6,11 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Table(name = "produto")
+@Table(name = "produtos")
 @Entity
 @Getter
 @Setter
-public class ProdutoEntity {
+public class ProdutosEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

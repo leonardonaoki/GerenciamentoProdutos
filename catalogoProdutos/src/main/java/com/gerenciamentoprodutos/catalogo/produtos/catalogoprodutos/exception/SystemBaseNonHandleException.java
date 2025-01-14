@@ -11,4 +11,8 @@ public class SystemBaseNonHandleException extends RuntimeException {
         super(message);
         this.errorCode = errorCode;
     }
+    @Override
+    public Throwable fillInStackTrace(){
+        return this;
+    }
 }

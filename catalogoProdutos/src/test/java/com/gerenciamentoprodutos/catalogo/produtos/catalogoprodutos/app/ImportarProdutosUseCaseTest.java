@@ -1,6 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller.ProdutoController;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller.ProdutosController;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 
@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class ImportarProdutoUseCaseTest {
+class ImportarProdutosUseCaseTest {
 
-    private ImportarProdutoUseCase importarProdutoUseCase;
+    private ImportarProdutosUseCase importarProdutosUseCase;
     @Mock
     private IFileGateway fileGateway;
     @Mock
@@ -33,7 +33,7 @@ class ImportarProdutoUseCaseTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
-        importarProdutoUseCase = new ImportarProdutoUseCase(fileGateway,produtoJobGateway);
+        importarProdutosUseCase = new ImportarProdutosUseCase(fileGateway,produtoJobGateway);
         csvFile = new CsvFile("dados.csv","C:\\Entrada",new byte[]{});
     }
     @Test
@@ -42,14 +42,14 @@ class ImportarProdutoUseCaseTest {
         when(produtoJobGateway.execute(csvFile)).thenReturn(new ResponseDTO(200,""));
         ArgumentCaptor<CsvFile> captor = ArgumentCaptor.forClass(CsvFile.class);
 
-        ResponseDTO response = importarProdutoUseCase.salvar(csvFile);
+        ResponseDTO response = importarProdutosUseCase.salvar(csvFile);
 
         verify(fileGateway, times(1)).salvar(captor.capture());
         verify(produtoJobGateway, times(1)).execute(captor.capture());
 
         CsvFile capturedCsvFile = captor.getValue();
         assertNotNull(capturedCsvFile);
-        assertEquals(ProdutoController.NOME_ARQUIVO_PADRAO, capturedCsvFile.getNomeArquivo());
+        assertEquals(ProdutosController.NOME_ARQUIVO_PADRAO, capturedCsvFile.getNomeArquivo());
         assertEquals(HttpStatus.OK, HttpStatus.valueOf(response.HttpStatusCode()));
     }
 }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 
-class ProdutoEntityTests {
+class ProdutosEntityTests {
     @Test
     void deveCriarESetarAsPropriedadesCorretamente(){
         long idTeste = 1;
@@ -16,7 +16,7 @@ class ProdutoEntityTests {
 
         long quantidadeEstoqueTeste = 300;
 
-        ProdutoEntity produto = new ProdutoEntity();
+        ProdutosEntity produto = new ProdutosEntity();
         produto.setId(idTeste);
         produto.setDescricao(descTeste);
         produto.setPreco(precoTeste);

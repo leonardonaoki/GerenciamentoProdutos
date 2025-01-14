@@ -8,4 +8,8 @@ public class SystemBaseHandleException extends Exception {
     public SystemBaseHandleException(String message) {
         super(message);
     }
+    @Override
+    public Throwable fillInStackTrace(){
+        return this;
+    }
 }

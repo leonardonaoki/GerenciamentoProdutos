@@ -1,6 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.ImportarProdutoUseCase;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.ImportarProdutosUseCase;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
@@ -17,12 +17,12 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ProdutoControllerTests {
+class ProdutosControllerTests {
 
     @InjectMocks
-    private ProdutoController produtoController;
+    private ProdutosController produtosController;
     @Mock
-    private ImportarProdutoUseCase importarProdutoUseCase;
+    private ImportarProdutosUseCase importarProdutosUseCase;
     private MultipartFile fileTeste;
     @BeforeEach
     void setup(){
@@ -32,7 +32,7 @@ class ProdutoControllerTests {
     void deveRetornarUmBadRequestSeArquivoForVazio() throws SystemBaseHandleException {
         fileTeste = new MockMultipartFile("upload.csv",new byte[]{});
 
-        ResponseEntity<?> response = produtoController.importaProdutosCSV(fileTeste);
+        ResponseEntity<?> response = produtosController.importaProdutosCSV(fileTeste);
         ResponseDTO mensagem = (ResponseDTO) response.getBody();
 
         assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
@@ -41,7 +41,7 @@ class ProdutoControllerTests {
     @Test
     void deveRetornarUmBadRequestSeArquivoNaoForCSV() throws SystemBaseHandleException {
         fileTeste = new MockMultipartFile("upload.xml",new byte[]{1});
-        ResponseEntity<?> response = produtoController.importaProdutosCSV(fileTeste);
+        ResponseEntity<?> response = produtosController.importaProdutosCSV(fileTeste);
         ResponseDTO mensagem = (ResponseDTO) response.getBody();
 
         assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
@@ -53,15 +53,15 @@ class ProdutoControllerTests {
         fileTeste = new MockMultipartFile("upload.csv", "upload.csv", "multipart/form-data", new byte[]{1});
 
         ArgumentCaptor<CsvFile> captor = ArgumentCaptor.forClass(CsvFile.class);
-        when(importarProdutoUseCase.salvar(any())).thenReturn(new ResponseDTO(HttpStatus.OK.value(), ""));
+        when(importarProdutosUseCase.salvar(any())).thenReturn(new ResponseDTO(HttpStatus.OK.value(), ""));
 
-        ResponseEntity<?> response = produtoController.importaProdutosCSV(fileTeste);
+        ResponseEntity<?> response = produtosController.importaProdutosCSV(fileTeste);
 
-        verify(importarProdutoUseCase, times(1)).salvar(captor.capture());
+        verify(importarProdutosUseCase, times(1)).salvar(captor.capture());
 
         CsvFile capturedCsvFile = captor.getValue();
         assertNotNull(capturedCsvFile);
-        assertEquals(ProdutoController.NOME_ARQUIVO_PADRAO, capturedCsvFile.getNomeArquivo());  // Verifique se o nome do arquivo está correto
+        assertEquals(ProdutosController.NOME_ARQUIVO_PADRAO, capturedCsvFile.getNomeArquivo());  // Verifique se o nome do arquivo está correto
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
@@ -72,7 +72,7 @@ class ProdutoControllerTests {
         when(mockFileTeste.getOriginalFilename()).thenReturn("dados.csv");
         doThrow(new IOException()).when(mockFileTeste).getBytes();
 
-        ResponseEntity<?> response = produtoController.importaProdutosCSV(mockFileTeste);
+        ResponseEntity<?> response = produtosController.importaProdutosCSV(mockFileTeste);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCode().value());
     }

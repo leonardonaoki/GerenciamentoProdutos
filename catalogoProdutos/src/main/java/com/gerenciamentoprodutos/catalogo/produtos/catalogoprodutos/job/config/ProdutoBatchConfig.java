@@ -1,6 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.job.config;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutoEntity;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.job.ProdutosProcessor;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.job.mapper.JobProdutoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -47,18 +49,19 @@ public class ProdutoBatchConfig {
     }
     @Bean
     public Step stepImportacao(JobRepository jobRepository,
-                     ItemReader<ProdutoEntity> itemReader,
-                     ItemWriter<ProdutoEntity> itemWriter){
+                     ItemReader<ProdutosEntity> itemReader,
+                     ItemWriter<ProdutosEntity> itemWriter){
             return new StepBuilder("Step de Importacao", jobRepository)
-                    .<ProdutoEntity,ProdutoEntity>chunk(20,transactionManager)
+                    .<ProdutosEntity, ProdutosEntity>chunk(20,transactionManager)
                     .reader(itemReader)
+                    .processor(itemProcessor())
                     .writer(itemWriter)
                     .allowStartIfComplete(true)
                     .build();
     }
     @Bean
-    public ItemReader<ProdutoEntity> itemReader(){
-            return new FlatFileItemReaderBuilder<ProdutoEntity>()
+    public ItemReader<ProdutosEntity> itemReader(){
+            return new FlatFileItemReaderBuilder<ProdutosEntity>()
                     .name("Leitura-csv")
                     .resource(new FileSystemResource(diretorioEntrada + "/dados.csv"))
                     .comments("--")
@@ -69,10 +72,14 @@ public class ProdutoBatchConfig {
                     .build();
     }
     @Bean
-    public ItemWriter<ProdutoEntity> itemWriter(DataSource dataSource){
-            return new JdbcBatchItemWriterBuilder<ProdutoEntity>()
+    public ProdutosProcessor itemProcessor(){
+        return new ProdutosProcessor();
+    }
+    @Bean
+    public ItemWriter<ProdutosEntity> itemWriter(DataSource dataSource){
+            return new JdbcBatchItemWriterBuilder<ProdutosEntity>()
                     .dataSource(dataSource)
-                    .sql("INSERT INTO produto"+
+                    .sql("INSERT INTO produtos"+
                             "(descricao,preco,quantidade_estoque) " +
                             "VALUES (:descricao, :preco, :quantidadeEstoque) "
                     )

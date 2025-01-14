@@ -45,7 +45,7 @@ public class ProdutoJobGateway implements IProdutoJobGateway{
             if(execution.getStatus() == BatchStatus.COMPLETED)
                 return new ResponseDTO(HttpStatus.OK.value(),"Importação executada com sucesso!");
 
-            throw new SystemBaseHandleException("Ocorreu um erro ao processar o arquivo.Erros:"+ execution.getFailureExceptions());
+            throw new SystemBaseHandleException("Código: " + execution.getExitStatus().getExitCode() + " -> " + execution.getExitStatus().getExitDescription());
         } catch (SystemBaseHandleException|
                  JobInstanceAlreadyCompleteException|
                  JobExecutionAlreadyRunningException|
@@ -53,7 +53,7 @@ public class ProdutoJobGateway implements IProdutoJobGateway{
                  JobRestartException
                 e) {
             log.error("Erro" + e.getMessage());
-            throw new SystemBaseHandleException("Ocorreu um erro ao processar o arquivo.Erro:" + e.getMessage());
+            throw new SystemBaseHandleException("Ocorreu um erro ao processar o arquivo." + e.getMessage());
         }
     }
 }

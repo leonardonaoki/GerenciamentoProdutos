@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ImportarProdutoUseCase {
+public class ImportarProdutosUseCase {
     private final IFileGateway fileGateway;
     private final IProdutoJobGateway produtoJobGateway;
 

@@ -1,7 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.job.mapper;
 
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutoEntity;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,7 +30,7 @@ class JobProdutoMapperTests {
         when(fieldSetMock.readString("descricao")).thenReturn("Produto Exemplo");
         when(fieldSetMock.readLong("quantidadeEstoque")).thenReturn(10L);
 
-        ProdutoEntity result = produtoMapper.mapFieldSet(fieldSetMock);
+        ProdutosEntity result = produtoMapper.mapFieldSet(fieldSetMock);
 
         assertNotNull(result);
         assertEquals(new java.math.BigDecimal("100.50"), result.getPreco());

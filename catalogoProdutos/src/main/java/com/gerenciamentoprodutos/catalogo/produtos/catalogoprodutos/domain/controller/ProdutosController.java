@@ -1,6 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.ImportarProdutoUseCase;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.ImportarProdutosUseCase;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 
@@ -23,8 +23,8 @@ import java.io.IOException;
 @RequestMapping("/importar-produtos")
 @RequiredArgsConstructor
 @Slf4j
-public class ProdutoController {
-    private final ImportarProdutoUseCase produtoUseCase;
+public class ProdutosController {
+    private final ImportarProdutosUseCase produtoUseCase;
     public static final String NOME_ARQUIVO_PADRAO = "dados.csv";
     @Value("${carga.input-path}")
     private String diretorio;
