@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class CatalogoProdutosApplicationTests {
     @Test
-    void deveExecutarAplicaoNormalmente(){
+    void deveExecutarAplicacaoNormalmente(){
         assertDoesNotThrow(() -> CatalogoProdutosApplication.main(new String[]{}));
     }
 }

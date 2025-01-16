@@ -9,8 +9,8 @@ public class JobProdutoMapper implements FieldSetMapper<ProdutosEntity>  {
     @Override
     public ProdutosEntity mapFieldSet(FieldSet fieldSet) {
         ProdutosEntity produto = new ProdutosEntity();
-        produto.setPreco(fieldSet.readBigDecimal("preco"));
         produto.setDescricao(fieldSet.readString("descricao"));
+        produto.setPreco(fieldSet.readBigDecimal("preco"));
         produto.setQuantidadeEstoque(fieldSet.readLong("quantidadeEstoque"));
         return produto;
     }

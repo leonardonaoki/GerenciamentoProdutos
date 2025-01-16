@@ -1,5 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper;
 
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
@@ -13,4 +14,9 @@ public interface IProdutoMapper {
     @Mapping(source = "entity.preco", target = "Preco")
     @Mapping(source = "entity.quantidadeEstoque", target = "QuantidadeEstoque")
     ProdutoDTO toDTO(ProdutosEntity produto);
+
+    @Mapping(source = "Descricao", target = "entity.descricao")
+    @Mapping(source = "Preco", target = "entity.preco")
+    @Mapping(source = "QuantidadeEstoque", target = "entity.quantidadeEstoque")
+    ProdutosEntity toEntity(InsertAndUpdateProdutoDTO dto);
 }

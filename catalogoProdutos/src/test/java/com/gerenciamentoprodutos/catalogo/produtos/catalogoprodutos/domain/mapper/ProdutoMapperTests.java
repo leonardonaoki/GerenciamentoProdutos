@@ -1,6 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,5 +38,19 @@ class ProdutoMapperTests {
         assertEquals(dto.Descricao(),produto.getDescricao());
         assertEquals(dto.Preco(),produto.getPreco());
         assertEquals(dto.QuantidadeEstoque(),produto.getQuantidadeEstoque());
+    }
+    @Test
+    void deveTransformarCorretamenteParaEntity(){
+        String descTeste = "Descrição Teste";
+        BigDecimal precoTeste = new BigDecimal("21.76");
+        long quantidadeEstoqueTeste = 300;
+
+        InsertAndUpdateProdutoDTO produto =
+                new InsertAndUpdateProdutoDTO(descTeste,precoTeste,quantidadeEstoqueTeste);
+
+        ProdutosEntity entity = produtoMapper.toEntity(produto);
+        assertEquals(entity.getPreco(),precoTeste);
+        assertEquals(entity.getDescricao(),descTeste);
+        assertEquals(entity.getQuantidadeEstoque(),quantidadeEstoqueTeste);
     }
 }

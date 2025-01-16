@@ -9,7 +9,7 @@ public class SystemBaseHandleException extends Exception {
         super(message);
     }
     @Override
-    public Throwable fillInStackTrace(){
+    public synchronized Throwable fillInStackTrace(){
         return this;
     }
 }
