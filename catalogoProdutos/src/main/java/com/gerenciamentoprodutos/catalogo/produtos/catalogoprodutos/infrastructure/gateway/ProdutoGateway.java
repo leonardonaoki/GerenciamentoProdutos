@@ -6,6 +6,7 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mappe
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,9 +28,9 @@ public class ProdutoGateway implements IProdutoGateway{
     }
 
     @Override
-    public ProdutoDTO listarProdutoPorId(long id) throws SystemBaseHandleException {
+    public ProdutoDTO listarProdutoPorId(long id){
         return produtoRepository.findById(id).map(produtoMapper::toDTO)
-                .orElseThrow(() -> new SystemBaseHandleException(ERROR_MESSAGE + id));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
     }
 
     @Override
@@ -39,9 +40,9 @@ public class ProdutoGateway implements IProdutoGateway{
     }
 
     @Override
-    public ProdutoDTO atualizarProdutoPorId(long id,InsertAndUpdateProdutoDTO dto) throws SystemBaseHandleException {
+    public ProdutoDTO atualizarProdutoPorId(long id,InsertAndUpdateProdutoDTO dto){
         ProdutosEntity produtoEncontrado = produtoRepository.findById(id)
-                .orElseThrow(() -> new SystemBaseHandleException(ERROR_MESSAGE + id));
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
         produtoEncontrado.setDescricao(dto.Descricao());
         produtoEncontrado.setPreco(dto.Preco());
         produtoEncontrado.setQuantidadeEstoque(dto.QuantidadeEstoque());
@@ -49,10 +50,10 @@ public class ProdutoGateway implements IProdutoGateway{
     }
 
     @Override
-    public void deletarProdutoPorId(long id) throws SystemBaseHandleException {
+    public void deletarProdutoPorId(long id){
         if(produtoRepository.existsById(id))
             produtoRepository.deleteById(id);
         else
-            throw new SystemBaseHandleException(ERROR_MESSAGE + id);
+            throw new EntityNotFoundException(ERROR_MESSAGE + id);
     }
 }

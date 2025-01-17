@@ -6,6 +6,7 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mappe
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -85,7 +86,7 @@ class ProdutoGatewayTest {
         when(produtoRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> produtoGateway.listarProdutoPorId(id));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.listarProdutoPorId(id));
         assertEquals("Não foi possível identificar o produto com o ID " + id, exception.getMessage());
         verify(produtoRepository).findById(id);
     }
@@ -146,7 +147,7 @@ class ProdutoGatewayTest {
         when(produtoRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> produtoGateway.atualizarProdutoPorId(id, dto));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.atualizarProdutoPorId(id, dto));
         assertEquals("Não foi possível identificar o produto com o ID " + id, exception.getMessage());
         verify(produtoRepository).findById(id);
     }
@@ -172,7 +173,7 @@ class ProdutoGatewayTest {
         when(produtoRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
-        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> produtoGateway.deletarProdutoPorId(id));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.deletarProdutoPorId(id));
         assertEquals("Não foi possível identificar o produto com o ID " + id, exception.getMessage());
         verify(produtoRepository).existsById(id);
     }
