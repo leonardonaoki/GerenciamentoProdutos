@@ -1,6 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller.ProdutosController;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller.ProdutosController;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 

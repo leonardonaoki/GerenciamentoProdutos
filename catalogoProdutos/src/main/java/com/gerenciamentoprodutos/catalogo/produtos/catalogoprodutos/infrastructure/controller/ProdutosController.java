@@ -1,4 +1,4 @@
-package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller;
+package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.*;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;

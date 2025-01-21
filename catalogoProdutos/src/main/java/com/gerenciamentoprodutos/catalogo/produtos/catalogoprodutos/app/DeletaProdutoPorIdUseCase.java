@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DeletaProdutoPorIdUseCase {
-    private final IProdutoGateway produtoJobGateway;
+    private final IProdutoGateway produtoGateway;
 
     public void deletaProdutoPorId(long id) throws SystemBaseHandleException {
-        produtoJobGateway.deletarProdutoPorId(id);
+        produtoGateway.deletarProdutoPorId(id);
     }
 }

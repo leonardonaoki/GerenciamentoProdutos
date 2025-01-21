@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CriarProdutoUseCase {
-    private final IProdutoGateway produtoJobGateway;
+    private final IProdutoGateway produtoGateway;
 
     public ProdutoDTO criarProduto(InsertAndUpdateProdutoDTO dto){
-        return produtoJobGateway.criarProduto(dto);
+        return produtoGateway.criarProduto(dto);
     }
 }

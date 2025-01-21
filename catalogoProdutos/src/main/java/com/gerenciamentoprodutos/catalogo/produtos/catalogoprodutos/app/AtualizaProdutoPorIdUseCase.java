@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AtualizaProdutoPorIdUseCase {
-    private final IProdutoGateway produtoJobGateway;
+    private final IProdutoGateway produtoGateway;
 
     public ProdutoDTO atualizaProdutoPorId(long id, InsertAndUpdateProdutoDTO dto) throws SystemBaseHandleException {
-        return produtoJobGateway.atualizarProdutoPorId(id,dto);
+        return produtoGateway.atualizarProdutoPorId(id,dto);
     }
 }

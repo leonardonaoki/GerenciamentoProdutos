@@ -1,4 +1,4 @@
-package com.gestaopedidos.gestao.pedidos;
+package com.gestaopedidos.gestao.pedidos.rabbitmq;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfiguration {
+public class RabbitProducerConfig {
 
     @Value("${queue.atualiza-estoque.name}")
     private String atualizaEstoqueQueueName;
