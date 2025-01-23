@@ -6,6 +6,7 @@ import com.gestaopedidos.gestao.pedidos.domain.dto.ResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertAndUpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.ListPedidosResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.PedidosAndMessagesResponseDTO;
+import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,7 +43,6 @@ public class PedidosController {
     private final ListarPedidoPorIdUseCase listarPedidoPorIdUseCase;
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final AtualizaPedidoPorIdUseCase atualizaPedidoUseCase;
-    private final DeletaPedidoPorIdUseCase deletaPedidoPorIdUseCase;
 
     @GetMapping()
     @Operation(
@@ -173,17 +173,25 @@ public class PedidosController {
     )
     public ResponseEntity<PedidosAndMessagesResponseDTO> criarProduto(
             @Valid @RequestBody(required = true) InsertAndUpdatePedidoDTO dto
-    ) {
-        PedidoDTO produtoInserido = criarPedidoUseCase.criarPedido(dto);
-        return ResponseEntity.ok().body(
-                new PedidosAndMessagesResponseDTO(
-                        produtoInserido,
-                        HttpStatus.CREATED.value(),
-                        "Sucesso")
-        );
+    ){
+        try{
+            PedidoDTO produtoInserido = criarPedidoUseCase.criarPedido(dto);
+            return ResponseEntity.ok().body(
+                    new PedidosAndMessagesResponseDTO(
+                            produtoInserido,
+                            HttpStatus.CREATED.value(),
+                            "Sucesso")
+            );
+        }catch (SystemBaseHandleException s) {
+            return ResponseEntity.internalServerError().body(
+                    new PedidosAndMessagesResponseDTO(
+                            null,
+                            HttpStatus.BAD_REQUEST.value(),
+                            s.getMessage()));
+        }
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(
             operationId = "AtualizarProduto",
             summary = "Atualiza um produto",
@@ -213,10 +221,10 @@ public class PedidosController {
             }
     )
     public ResponseEntity<PedidosAndMessagesResponseDTO> atualizarProdutoPorId(
-            @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) InsertAndUpdatePedidoDTO dto
+            @PathVariable(value = "id", required = true) long id, StatusEnum statusEnum
     ) {
         try {
-            PedidoDTO produtoAtualizado = atualizaPedidoUseCase.atualizaPedidoPorId(id, dto);
+            PedidoDTO produtoAtualizado = atualizaPedidoUseCase.atualizaPedidoPorId(id, statusEnum);
             return ResponseEntity.ok().body(
                     new PedidosAndMessagesResponseDTO(
                             produtoAtualizado,
@@ -227,60 +235,6 @@ public class PedidosController {
             return ResponseEntity.internalServerError().body(
                     new PedidosAndMessagesResponseDTO(
                             null,
-                            HttpStatus.BAD_REQUEST.value(),
-                            s.getMessage()));
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(
-            operationId = "DeletarProduto",
-            summary = "Deleta um produto",
-            description = "Esse endpoint deleta um produto",
-            tags = "CatalogoProdutos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = ResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Bad Request",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = ResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = ResponseDTO.class)
-                                    )
-                            }
-                    )
-            }
-    )
-    public ResponseEntity<ResponseDTO> deletaProdutoPorId(
-            @PathVariable(value = "id", required = true) long id) {
-        try {
-            deletaPedidoPorIdUseCase.deletaPedidoPorId(id);
-            return ResponseEntity.ok().body(new ResponseDTO(
-                    HttpStatus.OK.value(),
-                    "Deletado com sucesso!"));
-        } catch (SystemBaseHandleException s) {
-            return ResponseEntity.internalServerError().body(
-                    new ResponseDTO(
                             HttpStatus.BAD_REQUEST.value(),
                             s.getMessage()));
         }

@@ -3,30 +3,29 @@ package com.gestaopedidos.gestao.pedidos.infrastructure.gateway;
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertAndUpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
+import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IItensPedidoMapper;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IPedidoMapper;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.ItensPedidosEntity;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
-import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.specification.PedidosSpecification;
 import com.gestaopedidos.gestao.pedidos.infrastructure.repository.IItensPedidoRepository;
 import com.gestaopedidos.gestao.pedidos.infrastructure.repository.IPedidoRepository;
+import com.gestaopedidos.gestao.pedidos.rabbitmq.IEstoque;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PedidoGateway implements IPedidoGateway {
@@ -35,6 +34,7 @@ public class PedidoGateway implements IPedidoGateway {
     private final IItensPedidoRepository itensPedidoRepository;
     private final IPedidoMapper pedidoMapper;
     private final IItensPedidoMapper itensPedidoMapper;
+    private final IEstoque estoqueProducer;
     @Override
     public Page<PedidoDTO> listarPedidos(int offset, int limit) {
         Page<PedidoDTO> paginaPedidos = pedidoRepository.findAll(PageRequest.of(offset,limit)).map(pedidoMapper::toDTO);
@@ -71,27 +71,41 @@ public class PedidoGateway implements IPedidoGateway {
 
     @Override
     @Transactional
-    public PedidoDTO criarPedido(InsertAndUpdatePedidoDTO dto) {
-        PedidosEntity produtoSalvo = pedidoRepository.save(pedidoMapper.toEntity(dto));
-        return pedidoMapper.toDTO(produtoSalvo);
+    public PedidoDTO criarPedido(InsertAndUpdatePedidoDTO insertDTO, BigDecimal valorTotal) {
+        long idPedido = pedidoRepository.save(pedidoMapper.toEntity(insertDTO)).getIdPedido();
+        insertDTO.listaProdutos().stream().forEach(p -> {
+            ItensPedidosEntity itensPedido = new ItensPedidosEntity();
+            itensPedido.setIdPedido(idPedido);
+            itensPedido.setIdProduto(p.idProduto);
+            itensPedido.setQuantidade(p.quantidadeDesejada);
+            itensPedidoRepository.save(itensPedido);
+        });
+
+        estoqueProducer.atualizaEstoque(idPedido,insertDTO.listaProdutos(),AcaoEstoqueEnum.BAIXAR_ESTOQUE);
+
+        PedidoDTO pedidoCriado = new PedidoDTO();
+        pedidoCriado.setIdPedido(idPedido);
+        pedidoCriado.setStatus(StatusEnum.EM_CURSO.name());
+        pedidoCriado.setIdCliente(insertDTO.idCliente());
+        pedidoCriado.setListaProdutos(insertDTO.listaProdutos());
+        return pedidoCriado;
     }
 
     @Override
-    public PedidoDTO atualizarPedidoPorId(long id,InsertAndUpdatePedidoDTO dto){
-//        PedidosEntity produtoEncontrado = produtoRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
-//        produtoEncontrado.setDescricao(dto.Descricao());
-//        produtoEncontrado.setPreco(dto.Preco());
-//        produtoEncontrado.setQuantidadeEstoque(dto.QuantidadeEstoque());
-        //return produtoMapper.toDTO(produtoRepository.save(produtoEncontrado));
-        return null;
-    }
+    public PedidoDTO atualizarStatusPedidoPorId(long id,StatusEnum status) throws SystemBaseHandleException {
+        PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 
-    @Override
-    public void deletarPedidoPorId(long id){
-        if(pedidoRepository.existsById(id))
-            pedidoRepository.deleteById(id);
-        else
-            throw new EntityNotFoundException(ERROR_MESSAGE + id);
+        if(pedidoEncontrado.getStatus() == StatusEnum.CANCELADO.name() ||
+                pedidoEncontrado.getStatus() == StatusEnum.CONCLUIDO.name())
+            throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
+
+        pedidoEncontrado.setStatus(status.name());
+        PedidoDTO pedido = pedidoMapper.toDTO(pedidoRepository.save(pedidoEncontrado));
+
+        if(pedido.getStatus() == StatusEnum.CANCELADO.name())
+            estoqueProducer.atualizaEstoque(pedido.getIdPedido(),pedido.listaProdutos, AcaoEstoqueEnum.REPOR_ESTOQUE);
+
+        return pedido;
     }
 }

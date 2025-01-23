@@ -14,5 +14,5 @@ public class ItensPedidosEntity {
     private long id;
     private long idPedido;
     private long idProduto;
-    private String quantidade;
+    private long quantidade;
 }

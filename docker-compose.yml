@@ -1,18 +1,43 @@
 services:
-  app:
-    container_name: catalogoProdutos
+  appcatalogoprodutos:
+    container_name: appCatalogoProdutos
     build:
-      context: .
+      context: ./catalogoProdutos
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8081:8081
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sistemapedidosdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres      
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    networks:
+      - sistemapedidos-network
+  appgestaopedidos:
+    container_name: appGestaoPedidos
+    build:
+      context: ./gestaoPedidos
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - appcatalogoprodutos
+      - db
+      - rabbitmq
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sistemapedidosdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
     networks:
       - sistemapedidos-network
   db:
@@ -20,7 +45,7 @@ services:
     restart: always
     image: postgres:16.4-alpine3.20
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -41,10 +66,11 @@ services:
   rabbitmq:
     container_name: rabbitmq
     restart: always
-    image: rabbitmq:4.0.5-management-alpine
+    image: rabbitmq:4.0.5-management-alpine    
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - 5672:5672
+      - 15672:15672
+      - 25672:25672
     networks:
       - sistemapedidos-network
 volumes:
