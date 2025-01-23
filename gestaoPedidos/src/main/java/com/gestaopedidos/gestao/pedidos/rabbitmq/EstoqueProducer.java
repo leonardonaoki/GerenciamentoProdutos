@@ -19,9 +19,9 @@ public class EstoqueProducer implements IEstoque {
     private final StreamBridge streamBridge;
 
     @Override
-    public void atualizaEstoque(long idProduto, List<ProdutoDTO> listaProdutos , AcaoEstoqueEnum acao) {
+    public void atualizaEstoque(List<ProdutoDTO> listaProdutos , AcaoEstoqueEnum acao) {
         try{
-            streamBridge.send(ATUALIZA_ESTOQUE, new AtualizaEstoqueRabbitDTO(idProduto,listaProdutos,acao));
+            streamBridge.send(ATUALIZA_ESTOQUE, new AtualizaEstoqueRabbitDTO(listaProdutos,acao));
         }
         catch(Exception e){
             throw new SystemBaseNonHandleException("Erro ao mandar a mensagem para o microserviço de catálogo de produtos",

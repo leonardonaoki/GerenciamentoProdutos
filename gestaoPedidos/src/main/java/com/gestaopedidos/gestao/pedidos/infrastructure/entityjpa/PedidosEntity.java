@@ -1,5 +1,6 @@
 package com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa;
 
+import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,13 @@ public class PedidosEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idPedido;
     private long idCliente;
-    private String status;
-    private BigDecimal precoFinal;
+    private String Status;
+    private String CEP;
+    private Double Latitude;
+    private Double Longitude;
+    private BigDecimal PrecoFinal;
+
+    public PedidosEntity(){
+        this.Status = StatusEnum.EM_CURSO.name();
+    }
 }

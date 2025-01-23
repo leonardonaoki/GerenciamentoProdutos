@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface IEstoque
 {
-    void atualizaEstoque(long idProduto, List<ProdutoDTO> listaProdutos, AcaoEstoqueEnum acao);
+    void atualizaEstoque(List<ProdutoDTO> listaProdutos, AcaoEstoqueEnum acao);
 }

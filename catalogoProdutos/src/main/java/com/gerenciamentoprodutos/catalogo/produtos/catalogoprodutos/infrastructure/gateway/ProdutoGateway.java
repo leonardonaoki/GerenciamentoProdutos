@@ -1,5 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway;
 
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.consumer.AtualizacaoProdutosDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 @Component
@@ -47,6 +51,28 @@ public class ProdutoGateway implements IProdutoGateway{
         produtoEncontrado.setPreco(dto.Preco());
         produtoEncontrado.setQuantidadeEstoque(dto.QuantidadeEstoque());
         return produtoMapper.toDTO(produtoRepository.save(produtoEncontrado));
+    }
+    @Override
+    public void atualizarListaProdutos(AtualizacaoProdutosDTO dto){
+        boolean baixarEstoque = dto.acao().toUpperCase().contains("BAIXAR");
+        List<Long> listaIds = dto.listaProdutos().stream()
+                .map(p -> p.idProduto())
+                .toList();
+        List<ProdutosEntity> listaProdutos = produtoRepository.findAllById(listaIds);
+
+        dto.listaProdutos().forEach(produtoDTO -> {
+            listaProdutos.stream()
+                    .filter(produtoEntity -> produtoEntity.getId() == produtoDTO.idProduto())
+                    .findFirst()
+                    .ifPresent(produtoEntity -> {
+                        long novaQuantidade = baixarEstoque?
+                                produtoEntity.getQuantidadeEstoque() - produtoDTO.quantidadeDesejada() :
+                                produtoEntity.getQuantidadeEstoque() + produtoDTO.quantidadeDesejada();
+                        produtoEntity.setQuantidadeEstoque(novaQuantidade);
+                    });
+        });
+
+        produtoRepository.saveAll(listaProdutos);
     }
 
     @Override

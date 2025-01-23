@@ -12,7 +12,7 @@ public class ProdutoGateway implements IProdutoGateway {
 
     private final RestTemplate restTemplate;
     @Value("${api-produto-base-path}")
-    private static String urlProduto;
+    private String urlProduto;
     @Override
     public FindByProdutoIdResponseDTO findById(long id) {
         String url = urlProduto + "/" + id;

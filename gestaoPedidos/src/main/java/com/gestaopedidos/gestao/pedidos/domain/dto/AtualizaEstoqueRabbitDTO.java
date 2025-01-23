@@ -6,7 +6,6 @@ import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
 import java.util.List;
 
 public record AtualizaEstoqueRabbitDTO(
-        long idProduto,
         List<ProdutoDTO> listaProdutos,
         AcaoEstoqueEnum acao
 ) {

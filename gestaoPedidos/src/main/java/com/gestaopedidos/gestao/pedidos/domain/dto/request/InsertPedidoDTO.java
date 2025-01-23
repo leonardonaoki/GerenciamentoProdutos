@@ -1,16 +1,22 @@
 package com.gestaopedidos.gestao.pedidos.domain.dto.request;
 
+import com.gestaopedidos.gestao.pedidos.domain.validator.IValidaCep;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-public record InsertAndUpdatePedidoDTO(
-    @NotBlank(message = "O id do cliente não pode estar em branco.")
+public record InsertPedidoDTO(
+    @PositiveOrZero
     long idCliente,
     @NotEmpty
-    List<ProdutoDTO> listaProdutos
+    List<ProdutoDTO> listaProdutos,
+    @NotEmpty
+    @NotBlank
+    @IValidaCep
+    String CEP,
+    Double latitude,
+    Double longitude
 ){}
 

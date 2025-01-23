@@ -1,7 +1,7 @@
 package com.gestaopedidos.gestao.pedidos.app;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertAndUpdatePedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
@@ -19,7 +19,7 @@ public class CriarPedidoUseCase {
     private final IPedidoGateway pedidoGateway;
     private final IProdutoGateway produtoGateway;
 
-    public PedidoDTO criarPedido(InsertAndUpdatePedidoDTO dto) throws SystemBaseHandleException {
+    public PedidoDTO criarPedido(InsertPedidoDTO dto) throws SystemBaseHandleException {
         BigDecimal valorTotal = new BigDecimal(0);
         for(ProdutoDTO produto : dto.listaProdutos()){
             FindByProdutoIdResponseDTO response = produtoGateway.findById(produto.idProduto);
@@ -28,10 +28,8 @@ public class CriarPedidoUseCase {
             if(produto.quantidadeDesejada > response.Produto().QuantidadeEstoque())
                 throw new SystemBaseHandleException("Produto com o identificador: " + produto.idProduto + " - Não tem estoque o suficiente. " +
                         "Quantidade disponivel:" + response.Produto().QuantidadeEstoque());
-            valorTotal.add(response.Produto().Preco());
+            valorTotal = valorTotal.add(response.Produto().Preco());
         }
-        PedidoDTO pedido = pedidoGateway.criarPedido(dto,valorTotal);
-        pedido.setPrecoFinal(valorTotal);
-        return pedido;
+        return pedidoGateway.criarPedido(dto,valorTotal);
     }
 }

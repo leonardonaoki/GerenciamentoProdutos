@@ -1,7 +1,8 @@
 package com.gestaopedidos.gestao.pedidos.infrastructure.gateway;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertAndUpdatePedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
@@ -71,8 +72,11 @@ public class PedidoGateway implements IPedidoGateway {
 
     @Override
     @Transactional
-    public PedidoDTO criarPedido(InsertAndUpdatePedidoDTO insertDTO, BigDecimal valorTotal) {
-        long idPedido = pedidoRepository.save(pedidoMapper.toEntity(insertDTO)).getIdPedido();
+    public PedidoDTO criarPedido(InsertPedidoDTO insertDTO, BigDecimal valorTotal) {
+        PedidosEntity pedidoASalvar = pedidoMapper.toEntity(insertDTO);
+        pedidoASalvar.setPrecoFinal(valorTotal);
+        PedidosEntity pedidoCriado = pedidoRepository.save(pedidoASalvar);
+        long idPedido = pedidoCriado.getIdPedido();
         insertDTO.listaProdutos().stream().forEach(p -> {
             ItensPedidosEntity itensPedido = new ItensPedidosEntity();
             itensPedido.setIdPedido(idPedido);
@@ -81,18 +85,22 @@ public class PedidoGateway implements IPedidoGateway {
             itensPedidoRepository.save(itensPedido);
         });
 
-        estoqueProducer.atualizaEstoque(idPedido,insertDTO.listaProdutos(),AcaoEstoqueEnum.BAIXAR_ESTOQUE);
+        estoqueProducer.atualizaEstoque(insertDTO.listaProdutos(),AcaoEstoqueEnum.BAIXAR_ESTOQUE);
 
-        PedidoDTO pedidoCriado = new PedidoDTO();
-        pedidoCriado.setIdPedido(idPedido);
-        pedidoCriado.setStatus(StatusEnum.EM_CURSO.name());
-        pedidoCriado.setIdCliente(insertDTO.idCliente());
-        pedidoCriado.setListaProdutos(insertDTO.listaProdutos());
-        return pedidoCriado;
+        PedidoDTO pedidoDTO = new PedidoDTO();
+        pedidoDTO.setIdPedido(pedidoCriado.getIdPedido());
+        pedidoDTO.setStatus(pedidoCriado.getStatus());
+        pedidoDTO.setIdCliente(pedidoCriado.getIdCliente());
+        pedidoDTO.setListaProdutos(insertDTO.listaProdutos());
+        pedidoDTO.setCep(pedidoCriado.getCEP());
+        pedidoDTO.setLatitude(pedidoCriado.getLatitude());
+        pedidoDTO.setLongitude(pedidoCriado.getLongitude());
+        pedidoDTO.setPrecoFinal(valorTotal);
+        return pedidoDTO;
     }
 
     @Override
-    public PedidoDTO atualizarStatusPedidoPorId(long id,StatusEnum status) throws SystemBaseHandleException {
+    public void atualizarStatusPedidoPorId(long id, UpdatePedidoDTO dto) throws SystemBaseHandleException {
         PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 
@@ -100,12 +108,21 @@ public class PedidoGateway implements IPedidoGateway {
                 pedidoEncontrado.getStatus() == StatusEnum.CONCLUIDO.name())
             throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
 
-        pedidoEncontrado.setStatus(status.name());
-        PedidoDTO pedido = pedidoMapper.toDTO(pedidoRepository.save(pedidoEncontrado));
+        pedidoEncontrado.setStatus(dto.status().name());
+        pedidoEncontrado.setCEP(dto.CEP());
+        pedidoEncontrado.setLatitude(dto.Latitude());
+        pedidoEncontrado.setLongitude(dto.Longitude());
+        pedidoRepository.save(pedidoEncontrado);
 
-        if(pedido.getStatus() == StatusEnum.CANCELADO.name())
-            estoqueProducer.atualizaEstoque(pedido.getIdPedido(),pedido.listaProdutos, AcaoEstoqueEnum.REPOR_ESTOQUE);
-
-        return pedido;
+        if(dto.status().name() == StatusEnum.CANCELADO.name()){
+            List<ItensPedidosEntity> listaItens = itensPedidoRepository.findByIdPedido(id);
+            List<ProdutoDTO> listaProdutos = new ArrayList<>();
+            listaItens.stream().forEach(
+                    p -> {
+                        listaProdutos.add(itensPedidoMapper.toProdutoDTO(p));
+                    }
+            );
+            estoqueProducer.atualizaEstoque(listaProdutos, AcaoEstoqueEnum.REPOR_ESTOQUE);
+        }
     }
 }

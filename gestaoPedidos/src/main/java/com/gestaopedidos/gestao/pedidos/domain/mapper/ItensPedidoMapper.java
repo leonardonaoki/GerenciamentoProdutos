@@ -9,8 +9,8 @@ public class ItensPedidoMapper implements IItensPedidoMapper{
     @Override
     public ProdutoDTO toProdutoDTO(ItensPedidosEntity produto) {
         ProdutoDTO dto = new ProdutoDTO();
-        dto.idProduto = produto.getIdProduto();
-        dto.quantidadeDesejada = produto.getQuantidade();
+        dto.setIdProduto(produto.getIdProduto());
+        dto.setQuantidadeDesejada(produto.getQuantidade());
         return dto;
     }
 }
