@@ -4,12 +4,10 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.c
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Locale;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProdutoGateway implements IProdutoGateway{
@@ -60,7 +56,7 @@ public class ProdutoGateway implements IProdutoGateway{
                 .toList();
         List<ProdutosEntity> listaProdutos = produtoRepository.findAllById(listaIds);
 
-        dto.listaProdutos().forEach(produtoDTO -> {
+        dto.listaProdutos().forEach(produtoDTO ->
             listaProdutos.stream()
                     .filter(produtoEntity -> produtoEntity.getId() == produtoDTO.idProduto())
                     .findFirst()
@@ -69,8 +65,8 @@ public class ProdutoGateway implements IProdutoGateway{
                                 produtoEntity.getQuantidadeEstoque() - produtoDTO.quantidadeDesejada() :
                                 produtoEntity.getQuantidadeEstoque() + produtoDTO.quantidadeDesejada();
                         produtoEntity.setQuantidadeEstoque(novaQuantidade);
-                    });
-        });
+                    })
+        );
 
         produtoRepository.saveAll(listaProdutos);
     }

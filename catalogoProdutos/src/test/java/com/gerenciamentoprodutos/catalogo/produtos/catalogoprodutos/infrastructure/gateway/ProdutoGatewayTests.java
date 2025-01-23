@@ -3,7 +3,6 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastruct
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -60,7 +59,7 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void listarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste() throws SystemBaseHandleException {
+    void listarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste(){
         // Arrange
         long id = 1L;
         ProdutosEntity produtoEntity = new ProdutosEntity();
@@ -114,7 +113,7 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void atualizarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste() throws SystemBaseHandleException {
+    void atualizarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste(){
         // Arrange
         long id = 1L;
         InsertAndUpdateProdutoDTO dto = mock(InsertAndUpdateProdutoDTO.class);
@@ -153,7 +152,7 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void deletarProdutoPorIdDeveExcluirProdutoQuandoProdutoExiste() throws SystemBaseHandleException {
+    void deletarProdutoPorIdDeveExcluirProdutoQuandoProdutoExiste(){
         // Arrange
         long id = 1L;
         when(produtoRepository.existsById(id)).thenReturn(true);

@@ -44,9 +44,7 @@ public class PedidoGateway implements IPedidoGateway {
                             List<ItensPedidosEntity> listaItens = itensPedidoRepository.findByIdPedido(pagina.getIdPedido());
                             List<ProdutoDTO> listaProdutos = new ArrayList<>();
                                     listaItens.stream().forEach(
-                                    p -> {
-                                        listaProdutos.add(itensPedidoMapper.toProdutoDTO(p));
-                                    }
+                                    p ->listaProdutos.add(itensPedidoMapper.toProdutoDTO(p))
                             );
                             pagina.setListaProdutos(listaProdutos);
                     });
@@ -62,9 +60,7 @@ public class PedidoGateway implements IPedidoGateway {
         List<ItensPedidosEntity> listaItens = itensPedidoRepository.findByIdPedido(pedido.getIdPedido());
         List<ProdutoDTO> listaProdutos = new ArrayList<>();
         listaItens.stream().forEach(
-                p -> {
-                    listaProdutos.add(itensPedidoMapper.toProdutoDTO(p));
-                }
+                p ->listaProdutos.add(itensPedidoMapper.toProdutoDTO(p))
         );
         pedido.setListaProdutos(listaProdutos);
         return pedido;
@@ -80,8 +76,8 @@ public class PedidoGateway implements IPedidoGateway {
         insertDTO.listaProdutos().stream().forEach(p -> {
             ItensPedidosEntity itensPedido = new ItensPedidosEntity();
             itensPedido.setIdPedido(idPedido);
-            itensPedido.setIdProduto(p.idProduto);
-            itensPedido.setQuantidade(p.quantidadeDesejada);
+            itensPedido.setIdProduto(p.getIdProduto());
+            itensPedido.setQuantidade(p.getQuantidadeDesejada());
             itensPedidoRepository.save(itensPedido);
         });
 
@@ -92,7 +88,7 @@ public class PedidoGateway implements IPedidoGateway {
         pedidoDTO.setStatus(pedidoCriado.getStatus());
         pedidoDTO.setIdCliente(pedidoCriado.getIdCliente());
         pedidoDTO.setListaProdutos(insertDTO.listaProdutos());
-        pedidoDTO.setCep(pedidoCriado.getCEP());
+        pedidoDTO.setCep(pedidoCriado.getCep());
         pedidoDTO.setLatitude(pedidoCriado.getLatitude());
         pedidoDTO.setLongitude(pedidoCriado.getLongitude());
         pedidoDTO.setPrecoFinal(valorTotal);
@@ -104,23 +100,21 @@ public class PedidoGateway implements IPedidoGateway {
         PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 
-        if(pedidoEncontrado.getStatus() == StatusEnum.CANCELADO.name() ||
-                pedidoEncontrado.getStatus() == StatusEnum.CONCLUIDO.name())
+        if(pedidoEncontrado.getStatus().equals(StatusEnum.CANCELADO.name()) ||
+                pedidoEncontrado.getStatus().equals(StatusEnum.CONCLUIDO.name()))
             throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
 
         pedidoEncontrado.setStatus(dto.status().name());
-        pedidoEncontrado.setCEP(dto.CEP());
+        pedidoEncontrado.setCep(dto.CEP());
         pedidoEncontrado.setLatitude(dto.Latitude());
         pedidoEncontrado.setLongitude(dto.Longitude());
         pedidoRepository.save(pedidoEncontrado);
 
-        if(dto.status().name() == StatusEnum.CANCELADO.name()){
+        if(dto.status().name().equals(StatusEnum.CANCELADO.name())){
             List<ItensPedidosEntity> listaItens = itensPedidoRepository.findByIdPedido(id);
             List<ProdutoDTO> listaProdutos = new ArrayList<>();
             listaItens.stream().forEach(
-                    p -> {
-                        listaProdutos.add(itensPedidoMapper.toProdutoDTO(p));
-                    }
+                    p ->listaProdutos.add(itensPedidoMapper.toProdutoDTO(p))
             );
             estoqueProducer.atualizaEstoque(listaProdutos, AcaoEstoqueEnum.REPOR_ESTOQUE);
         }

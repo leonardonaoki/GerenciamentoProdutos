@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProdutoDTO{
-    public long idProduto;
-    public long quantidadeDesejada;
+    private long idProduto;
+    private long quantidadeDesejada;
 }

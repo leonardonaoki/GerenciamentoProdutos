@@ -1,6 +1,5 @@
 package com.gestaopedidos.gestao.pedidos.app;
 
-import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;

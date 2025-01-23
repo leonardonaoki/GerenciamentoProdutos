@@ -15,7 +15,7 @@ public class PedidoMapper implements IPedidoMapper{
         pedido.setIdCliente(produto.getIdCliente());
         pedido.setStatus(produto.getStatus());
         pedido.setPrecoFinal(produto.getPrecoFinal());
-        pedido.setCep(produto.getCEP());
+        pedido.setCep(produto.getCep());
         pedido.setLatitude(produto.getLatitude());
         pedido.setLongitude(produto.getLongitude());
         return pedido;
@@ -25,7 +25,7 @@ public class PedidoMapper implements IPedidoMapper{
     public PedidosEntity toEntity(InsertPedidoDTO dto) {
         PedidosEntity entity = new PedidosEntity();
         entity.setIdCliente(dto.idCliente());
-        entity.setCEP(dto.CEP());
+        entity.setCep(dto.CEP());
         entity.setLatitude(dto.latitude());
         entity.setLongitude(dto.longitude());
         return entity;

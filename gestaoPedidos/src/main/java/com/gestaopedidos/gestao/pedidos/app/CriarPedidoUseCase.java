@@ -22,11 +22,11 @@ public class CriarPedidoUseCase {
     public PedidoDTO criarPedido(InsertPedidoDTO dto) throws SystemBaseHandleException {
         BigDecimal valorTotal = new BigDecimal(0);
         for(ProdutoDTO produto : dto.listaProdutos()){
-            FindByProdutoIdResponseDTO response = produtoGateway.findById(produto.idProduto);
+            FindByProdutoIdResponseDTO response = produtoGateway.findById(produto.getIdProduto());
             if(response.HttpStatusCode() != HttpStatus.SC_OK)
-                throw new SystemBaseHandleException("Produto com o identificador: " + produto.idProduto + " - Não está disponível");
-            if(produto.quantidadeDesejada > response.Produto().QuantidadeEstoque())
-                throw new SystemBaseHandleException("Produto com o identificador: " + produto.idProduto + " - Não tem estoque o suficiente. " +
+                throw new SystemBaseHandleException("Produto com o identificador: " + produto.getIdProduto() + " - Não está disponível");
+            if(produto.getQuantidadeDesejada() > response.Produto().QuantidadeEstoque())
+                throw new SystemBaseHandleException("Produto com o identificador: " + produto.getIdProduto() + " - Não tem estoque o suficiente. " +
                         "Quantidade disponivel:" + response.Produto().QuantidadeEstoque());
             valorTotal = valorTotal.add(response.Produto().Preco());
         }

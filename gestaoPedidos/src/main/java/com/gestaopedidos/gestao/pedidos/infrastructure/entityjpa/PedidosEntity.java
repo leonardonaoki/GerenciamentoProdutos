@@ -16,13 +16,13 @@ public class PedidosEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idPedido;
     private long idCliente;
-    private String Status;
-    private String CEP;
-    private Double Latitude;
-    private Double Longitude;
-    private BigDecimal PrecoFinal;
+    private String status;
+    private String cep;
+    private Double latitude;
+    private Double longitude;
+    private BigDecimal precoFinal;
 
     public PedidosEntity(){
-        this.Status = StatusEnum.EM_CURSO.name();
+        this.status = StatusEnum.EM_CURSO.name();
     }
 }

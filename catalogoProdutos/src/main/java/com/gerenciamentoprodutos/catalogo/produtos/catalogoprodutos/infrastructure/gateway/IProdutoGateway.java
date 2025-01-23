@@ -6,8 +6,6 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.P
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface IProdutoGateway {
     Page<ProdutoDTO> listarProdutos(int offset,int limit);
     ProdutoDTO listarProdutoPorId(long id) throws SystemBaseHandleException;
