@@ -78,10 +78,7 @@ public class ProdutoBatchConfig {
     public ItemWriter<ProdutosEntity> itemWriter(DataSource dataSource){
             return new JdbcBatchItemWriterBuilder<ProdutosEntity>()
                     .dataSource(dataSource)
-                    .sql("INSERT INTO produtos"+
-                            "(descricao,preco,quantidade_estoque) " +
-                            "VALUES (:descricao, :preco, :quantidadeEstoque) "
-                    )
+                    .sql(ProdutoBatchCommands.insertProdutoCommand)
                     .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                     .build();
     }
