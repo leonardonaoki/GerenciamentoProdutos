@@ -1,4 +1,20 @@
 services:
+
+  appcadastroclientes:
+    container_name: appCadastroClientes
+    build:
+      context: ./cadastroClientes
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8082
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sistemapedidosdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - sistemapedidos-network
   appcatalogoprodutos:
     container_name: appCatalogoProdutos
     build:
