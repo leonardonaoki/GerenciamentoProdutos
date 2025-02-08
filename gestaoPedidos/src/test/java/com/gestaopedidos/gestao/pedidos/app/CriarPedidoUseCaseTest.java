@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByClienteIdResponseDTO;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByIdClienteDTO;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByIdProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByProdutoIdResponseDTO;
 import org.apache.http.HttpStatus;
@@ -28,6 +30,8 @@ class CriarPedidoUseCaseTest {
 
     @Mock
     private IProdutoGateway produtoGateway;
+    @Mock
+    private IClienteGateway clienteGateway;
 
     @InjectMocks
     private CriarPedidoUseCase criarPedidoUseCase;
@@ -45,7 +49,7 @@ class CriarPedidoUseCaseTest {
         FindByIdProdutoDTO produtoResponse = mock(FindByIdProdutoDTO.class);
 
         when(domain.getListaProdutos()).thenReturn(Arrays.asList(produto));
-        when(domain.getValorTotalProdutos(domain.getListaProdutos())).thenReturn(new BigDecimal("100.00"));
+        when(domain.getValorTotalProdutos()).thenReturn(new BigDecimal("100.00"));
         when(produto.getIdProduto()).thenReturn(1L);
         when(produtoGateway.findById(1L)).thenReturn(response);
         when(response.HttpStatusCode()).thenReturn(HttpStatus.SC_OK);
@@ -62,15 +66,18 @@ class CriarPedidoUseCaseTest {
     }
 
     @Test
-    void testCriarPedido_ProdutoNotAvailable() {
-        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway);
+    void testCriarPedido_ProdutoNotAvailable(){
+        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway,clienteGateway);
+        domain.setIdCliente(1);
         ProdutoDTO produto = mock(ProdutoDTO.class);
         produto.setIdProduto(100);
         domain.setListaProdutos(Arrays.asList(produto));
         FindByProdutoIdResponseDTO response = mock(FindByProdutoIdResponseDTO.class);
-
+        FindByClienteIdResponseDTO responsecliente = new FindByClienteIdResponseDTO(mock(FindByIdClienteDTO.class),
+                HttpStatus.SC_OK,"");
         when(produto.getIdProduto()).thenReturn(1L);
         when(produtoGateway.findById(1L)).thenReturn(response);
+        when(clienteGateway.findById(1L)).thenReturn(responsecliente);
         when(response.HttpStatusCode()).thenReturn(HttpStatus.SC_NOT_FOUND);
 
         SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> {
@@ -82,14 +89,17 @@ class CriarPedidoUseCaseTest {
 
     @Test
     void testCriarPedido_ProdutoQuantidadeInsuficiente() {
-        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway);
+        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway,clienteGateway);
+        domain.setIdCliente(1);
         ProdutoDTO produto = mock(ProdutoDTO.class);
         domain.setListaProdutos(Arrays.asList(produto));
         FindByProdutoIdResponseDTO response = mock(FindByProdutoIdResponseDTO.class);
         FindByIdProdutoDTO produtoResponse = mock(FindByIdProdutoDTO.class);
-
+        FindByClienteIdResponseDTO responsecliente = new FindByClienteIdResponseDTO(mock(FindByIdClienteDTO.class),
+                HttpStatus.SC_OK,"");
         when(produto.getIdProduto()).thenReturn(1L);
         when(produtoGateway.findById(1L)).thenReturn(response);
+        when(clienteGateway.findById(1L)).thenReturn(responsecliente);
         when(response.HttpStatusCode()).thenReturn(HttpStatus.SC_OK);
         when(response.Produto()).thenReturn(produtoResponse);
         when(produto.getQuantidadeDesejada()).thenReturn(15L);

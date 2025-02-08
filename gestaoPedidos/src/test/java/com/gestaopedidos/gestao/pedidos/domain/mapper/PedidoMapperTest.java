@@ -3,10 +3,9 @@ package com.gestaopedidos.gestao.pedidos.domain.mapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
-import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,8 @@ class PedidoMapperTest {
     @BeforeEach
     public void setUp() {
         IProdutoGateway produtoGateway = mock(IProdutoGateway.class);
-        pedidoMapper = new PedidoMapper(produtoGateway);
+        IClienteGateway clienteGateway = mock(IClienteGateway.class);
+        pedidoMapper = new PedidoMapper(produtoGateway,clienteGateway);
     }
 
     @Test
@@ -50,10 +50,11 @@ class PedidoMapperTest {
     @Test
     void testToEntity() {
         IProdutoGateway pedidoGateway = mock(IProdutoGateway.class);
-        InsertPedidoDomain domain = new InsertPedidoDomain(pedidoGateway);
+        IClienteGateway clienteGateway = mock(IClienteGateway.class);
+        InsertPedidoDomain domain = new InsertPedidoDomain(pedidoGateway,clienteGateway);
         domain.setIdCliente(2);
         domain.setListaProdutos(new ArrayList<>());
-        domain.setCEP("12345-678");
+        domain.setCep("12345-678");
         domain.setLatitude(12.345678);
         domain.setLongitude( 98.765432);
 

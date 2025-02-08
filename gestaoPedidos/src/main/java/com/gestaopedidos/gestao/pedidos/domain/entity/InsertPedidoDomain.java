@@ -2,7 +2,9 @@ package com.gestaopedidos.gestao.pedidos.domain.entity;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByClienteIdResponseDTO;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.json.FindByProdutoIdResponseDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,16 @@ import java.util.List;
 public class InsertPedidoDomain {
     private long idCliente;
     private List<ProdutoDTO> listaProdutos;
-    private String CEP;
+    private String cep;
     private Double latitude;
     private Double longitude;
 
     private final IProdutoGateway produtoGateway;
+    private final IClienteGateway clienteGateway;
 
-    public BigDecimal getValorTotalProdutos(List<ProdutoDTO> listaProdutos) throws SystemBaseHandleException {
+    public BigDecimal getValorTotalProdutos() throws SystemBaseHandleException {
         BigDecimal valorTotal = new BigDecimal(0);
-        for(ProdutoDTO produto : listaProdutos){
+        for(ProdutoDTO produto : this.listaProdutos){
             FindByProdutoIdResponseDTO response = produtoGateway.findById(produto.getIdProduto());
             if(response.HttpStatusCode() != HttpStatus.SC_OK)
                 throw new SystemBaseHandleException("Produto com o identificador: " + produto.getIdProduto() + " - Não está disponível");
@@ -36,5 +39,11 @@ public class InsertPedidoDomain {
             valorTotal = valorTotal.add(response.Produto().Preco());
         }
         return valorTotal;
+    }
+
+    public void verificaClienteExiste() throws SystemBaseHandleException {
+        FindByClienteIdResponseDTO response = clienteGateway.findById(this.idCliente);
+        if(response.HttpStatusCode() != HttpStatus.SC_OK)
+            throw new SystemBaseHandleException("Cliente com o id " + idCliente + " não encontrado");
     }
 }

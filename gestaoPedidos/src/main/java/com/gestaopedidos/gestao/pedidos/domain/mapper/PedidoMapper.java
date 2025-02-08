@@ -6,6 +6,7 @@ import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PedidoMapper implements IPedidoMapper{
     private final IProdutoGateway produtoGateway;
+    private final IClienteGateway clienteGateway;
     @Override
     public PedidoDTO toDTO(PedidosEntity produto) {
         PedidoDTO pedido = new PedidoDTO();
@@ -31,7 +33,7 @@ public class PedidoMapper implements IPedidoMapper{
     public PedidosEntity toEntity(InsertPedidoDomain domain) {
         PedidosEntity entity = new PedidosEntity();
         entity.setIdCliente(domain.getIdCliente());
-        entity.setCep(domain.getCEP());
+        entity.setCep(domain.getCep());
         entity.setLatitude(domain.getLatitude());
         entity.setLongitude(domain.getLongitude());
         return entity;
@@ -39,10 +41,10 @@ public class PedidoMapper implements IPedidoMapper{
 
     @Override
     public InsertPedidoDomain toInsertDomain(InsertPedidoDTO insertPedidoDTO) {
-        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway);
+        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway,clienteGateway);
         domain.setIdCliente(insertPedidoDTO.idCliente());
         domain.setListaProdutos(insertPedidoDTO.listaProdutos());
-        domain.setCEP(insertPedidoDTO.CEP());
+        domain.setCep(insertPedidoDTO.CEP());
         domain.setLatitude(insertPedidoDTO.latitude());
         domain.setLongitude(insertPedidoDTO.longitude());
         return domain;

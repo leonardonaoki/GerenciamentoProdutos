@@ -169,10 +169,11 @@ class PedidoGatewayTest {
         List<ProdutoDTO> produtos = Arrays.asList(prod1,prod2);
 
         IProdutoGateway produtoGateway = mock(IProdutoGateway.class);
-        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway);
+        IClienteGateway clienteGateway = mock(IClienteGateway.class);
+        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway,clienteGateway);
         domain.setIdCliente(1);
         domain.setListaProdutos(produtos);
-        domain.setCEP("01508001");
+        domain.setCep("01508001");
         domain.setLatitude(12.345);
         domain.setLongitude(67.890);
 
