@@ -4,9 +4,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IItensPedidoMapper;
@@ -105,7 +105,7 @@ class PedidoGatewayTest {
         ProdutoDTO produtoDTO = new ProdutoDTO();
         PedidosEntity entity = new PedidosEntity();
         entity.setIdPedido(1);
-        when(pedidoRepository.findById(1l)).thenReturn(Optional.of(entity));
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(entity));
         when(pedidoMapper.toDTO(entity)).thenReturn(pedidoDTO);
         when(itensPedidoRepository.findByIdPedido(1)).thenReturn(listaItens);
         when(itensPedidoMapper.toProdutoDTO(item)).thenReturn(produtoDTO);
@@ -114,7 +114,7 @@ class PedidoGatewayTest {
 
         assertNotNull(result);
         assertEquals(1, result.getListaProdutos().size());
-        verify(pedidoRepository).findById(1l);
+        verify(pedidoRepository).findById(1L);
         verify(pedidoMapper).toDTO(entity);
         verify(itensPedidoRepository).findByIdPedido(1);
         verify(itensPedidoMapper).toProdutoDTO(item);
@@ -126,9 +126,7 @@ class PedidoGatewayTest {
 
         when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            pedidoGateway.listarPedidoPorId(id);
-        });
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> pedidoGateway.listarPedidoPorId(id));
 
         assertEquals(ERROR_MESSAGE + id, exception.getMessage());
         verify(pedidoRepository).findById(id);
@@ -145,7 +143,7 @@ class PedidoGatewayTest {
         List<ItensPedidosEntity> listaItens = new ArrayList<>();
         PedidosEntity entity = new PedidosEntity();
         entity.setIdPedido(1);
-        when(pedidoRepository.findById(1l)).thenReturn(Optional.of(entity));
+        when(pedidoRepository.findById(1L)).thenReturn(Optional.of(entity));
         when(pedidoMapper.toDTO(entity)).thenReturn(pedido);
         when(itensPedidoRepository.findByIdPedido(1)).thenReturn(listaItens);
 
@@ -153,7 +151,7 @@ class PedidoGatewayTest {
 
         assertNotNull(result);
         assertTrue(result.getListaProdutos().isEmpty());
-        verify(pedidoRepository).findById(1l);
+        verify(pedidoRepository).findById(1L);
         verify(pedidoMapper).toDTO(entity);
         verify(itensPedidoRepository).findByIdPedido(1);
         verify(itensPedidoMapper, never()).toProdutoDTO(any());
@@ -169,7 +167,14 @@ class PedidoGatewayTest {
         prod1.setIdProduto(2);
         prod1.setQuantidadeDesejada(30);
         List<ProdutoDTO> produtos = Arrays.asList(prod1,prod2);
-        InsertPedidoDTO insertDTO = new InsertPedidoDTO(1,produtos,"01508001",12.345,67.890);
+
+        IProdutoGateway produtoGateway = mock(IProdutoGateway.class);
+        InsertPedidoDomain domain = new InsertPedidoDomain(produtoGateway);
+        domain.setIdCliente(1);
+        domain.setListaProdutos(produtos);
+        domain.setCEP("01508001");
+        domain.setLatitude(12.345);
+        domain.setLongitude(67.890);
 
         BigDecimal valorTotal = new BigDecimal("100.00");
 
@@ -182,11 +187,11 @@ class PedidoGatewayTest {
         pedidoEntity.setLongitude(67.890);
         pedidoEntity.setPrecoFinal(valorTotal);
 
-        when(pedidoMapper.toEntity(insertDTO)).thenReturn(pedidoEntity);
+        when(pedidoMapper.toEntity(domain)).thenReturn(pedidoEntity);
         when(pedidoRepository.save(any(PedidosEntity.class))).thenReturn(pedidoEntity);
 
         // Act
-        PedidoDTO result = pedidoGateway.criarPedido(insertDTO, valorTotal);
+        PedidoDTO result = pedidoGateway.criarPedido(domain, valorTotal);
 
         // Assert
         assertNotNull(result);
@@ -199,7 +204,7 @@ class PedidoGatewayTest {
         assertEquals(67.890, result.getLongitude());
         assertEquals(valorTotal, result.getPrecoFinal());
 
-        verify(pedidoMapper).toEntity(insertDTO);
+        verify(pedidoMapper).toEntity(domain);
         verify(pedidoRepository).save(any(PedidosEntity.class));
         verify(itensPedidoRepository, times(produtos.size())).save(any(ItensPedidosEntity.class));
         verify(estoqueProducer).atualizaEstoque(produtos, AcaoEstoqueEnum.BAIXAR_ESTOQUE);
@@ -208,12 +213,10 @@ class PedidoGatewayTest {
     @Test
     void testAtualizarStatusPedidoPorId_OrderNotFound() {
         long id = 1L;
-        UpdatePedidoDTO dto = mock(UpdatePedidoDTO.class);
+        UpdatePedidoDomain dto = mock(UpdatePedidoDomain.class);
         when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            pedidoGateway.atualizarStatusPedidoPorId(id, dto);
-        });
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> pedidoGateway.atualizarStatusPedidoPorId(id, dto));
 
         assertEquals(ERROR_MESSAGE + id, exception.getMessage());
     }
@@ -221,28 +224,24 @@ class PedidoGatewayTest {
     @Test
     void testAtualizarStatusPedidoPorId_OrderStatusCancelado() {
         long id = 1L;
-        UpdatePedidoDTO dto = mock(UpdatePedidoDTO.class);
+        UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
         pedido.setStatus(StatusEnum.CANCELADO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
 
-        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> {
-            pedidoGateway.atualizarStatusPedidoPorId(id, dto);
-        });
+        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> pedidoGateway.atualizarStatusPedidoPorId(id, domain));
 
         assertEquals("Não é possível alterar o status de um produto cancelado ou concluido", exception.getMessage());
     }
     @Test
     void testAtualizarStatusPedidoPorId_OrderStatusConcluido() {
         long id = 1L;
-        UpdatePedidoDTO dto = mock(UpdatePedidoDTO.class);
+        UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
         pedido.setStatus(StatusEnum.CONCLUIDO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
 
-        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> {
-            pedidoGateway.atualizarStatusPedidoPorId(id, dto);
-        });
+        SystemBaseHandleException exception = assertThrows(SystemBaseHandleException.class, () -> pedidoGateway.atualizarStatusPedidoPorId(id, domain));
 
         assertEquals("Não é possível alterar o status de um produto cancelado ou concluido", exception.getMessage());
     }
@@ -250,13 +249,13 @@ class PedidoGatewayTest {
     @Test
     void testAtualizarStatusPedidoPorId_Success() throws SystemBaseHandleException {
         long id = 1L;
-        UpdatePedidoDTO dto = mock(UpdatePedidoDTO.class);
+        UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
         pedido.setStatus(StatusEnum.EM_CURSO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
-        when(dto.status()).thenReturn(StatusEnum.CONCLUIDO);
+        when(domain.getStatus()).thenReturn(StatusEnum.CONCLUIDO);
 
-        pedidoGateway.atualizarStatusPedidoPorId(id, dto);
+        pedidoGateway.atualizarStatusPedidoPorId(id, domain);
 
         verify(pedidoRepository).save(pedido);
         assertEquals(StatusEnum.CONCLUIDO.name(), pedido.getStatus());
@@ -265,11 +264,11 @@ class PedidoGatewayTest {
     @Test
     void testAtualizarStatusPedidoPorId_CanceladoStatus() throws SystemBaseHandleException {
         long id = 1L;
-        UpdatePedidoDTO dto = mock(UpdatePedidoDTO.class);
+        UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
         pedido.setStatus(StatusEnum.EM_CURSO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
-        when(dto.status()).thenReturn(StatusEnum.CANCELADO);
+        when(domain.getStatus()).thenReturn(StatusEnum.CANCELADO);
         List<ItensPedidosEntity> listaItens = new ArrayList<>();
         ItensPedidosEntity item = new ItensPedidosEntity();
         listaItens.add(item);
@@ -277,7 +276,7 @@ class PedidoGatewayTest {
         ProdutoDTO produtoDTO = new ProdutoDTO();
         when(itensPedidoMapper.toProdutoDTO(item)).thenReturn(produtoDTO);
 
-        pedidoGateway.atualizarStatusPedidoPorId(id, dto);
+        pedidoGateway.atualizarStatusPedidoPorId(id, domain);
 
         verify(pedidoRepository).save(pedido);
         verify(estoqueProducer).atualizaEstoque(anyList(), eq(AcaoEstoqueEnum.REPOR_ESTOQUE));

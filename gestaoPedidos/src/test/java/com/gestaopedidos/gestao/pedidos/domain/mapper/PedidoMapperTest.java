@@ -4,9 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
+import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +21,8 @@ class PedidoMapperTest {
 
     @BeforeEach
     public void setUp() {
-        pedidoMapper = new PedidoMapper();
+        IProdutoGateway produtoGateway = mock(IProdutoGateway.class);
+        pedidoMapper = new PedidoMapper(produtoGateway);
     }
 
     @Test
@@ -44,9 +49,15 @@ class PedidoMapperTest {
 
     @Test
     void testToEntity() {
-        InsertPedidoDTO dto = new InsertPedidoDTO(2, new ArrayList<>(),"12345-678", 12.345678, 98.765432);
+        IProdutoGateway pedidoGateway = mock(IProdutoGateway.class);
+        InsertPedidoDomain domain = new InsertPedidoDomain(pedidoGateway);
+        domain.setIdCliente(2);
+        domain.setListaProdutos(new ArrayList<>());
+        domain.setCEP("12345-678");
+        domain.setLatitude(12.345678);
+        domain.setLongitude( 98.765432);
 
-        PedidosEntity entity = pedidoMapper.toEntity(dto);
+        PedidosEntity entity = pedidoMapper.toEntity(domain);
 
         assertEquals(2, entity.getIdCliente());
         assertEquals("12345-678", entity.getCep());

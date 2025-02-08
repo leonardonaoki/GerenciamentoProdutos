@@ -7,6 +7,7 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.R
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.responses.ListProdutosResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller.ProdutosController;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +59,9 @@ class ProdutosControllerTests {
 
     @Mock
     private DeletaProdutoPorIdUseCase deletaProdutoPorIdUseCase;
+    @Mock
+    private IProdutoMapper produtoMapper;
+
     private MultipartFile fileTeste;
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;

@@ -1,6 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.consumer.AtualizacaoProdutosDTO;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.consumer.AtualizacaoProdutosDomain;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IProdutoGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class AtualizaListaProdutoUseCase {
     private final IProdutoGateway produtoGateway;
 
-    public void atualizaListaProdutos(AtualizacaoProdutosDTO dto){
+    public void atualizaListaProdutos(AtualizacaoProdutosDomain dto){
         produtoGateway.atualizarListaProdutos(dto);
     }
 }

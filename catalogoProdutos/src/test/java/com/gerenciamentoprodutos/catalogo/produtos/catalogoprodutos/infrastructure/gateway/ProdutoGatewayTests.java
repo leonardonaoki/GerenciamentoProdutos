@@ -1,7 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.ProdutosDomain;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
@@ -93,21 +93,22 @@ class ProdutoGatewayTest {
     @Test
     void criarProdutoDeveRetornarProdutoDTO() {
         // Arrange
-        InsertAndUpdateProdutoDTO dto = mock(InsertAndUpdateProdutoDTO.class);
+
+        ProdutosDomain domain = mock(ProdutosDomain.class);
         ProdutosEntity produtoSalvo = new ProdutosEntity();
         ProdutoDTO produtoDTO = new ProdutoDTO(1,"DescricaoTeste",new BigDecimal(100),300);
 
-        when(produtoMapper.toEntity(dto)).thenReturn(produtoSalvo);
+        when(produtoMapper.toEntity(domain)).thenReturn(produtoSalvo);
         when(produtoRepository.save(produtoSalvo)).thenReturn(produtoSalvo);
         when(produtoMapper.toDTO(produtoSalvo)).thenReturn(produtoDTO);
 
         // Act
-        ProdutoDTO resultado = produtoGateway.criarProduto(dto);
+        ProdutoDTO resultado = produtoGateway.criarProduto(domain);
 
         // Assert
         assertNotNull(resultado);
         assertEquals(produtoDTO, resultado);
-        verify(produtoMapper).toEntity(dto);
+        verify(produtoMapper).toEntity(domain);
         verify(produtoRepository).save(produtoSalvo);
         verify(produtoMapper).toDTO(produtoSalvo);
     }
@@ -116,7 +117,7 @@ class ProdutoGatewayTest {
     void atualizarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste(){
         // Arrange
         long id = 1L;
-        InsertAndUpdateProdutoDTO dto = mock(InsertAndUpdateProdutoDTO.class);
+        ProdutosDomain domain = mock(ProdutosDomain.class);
 
         ProdutosEntity produtoEncontrado = new ProdutosEntity();
         ProdutosEntity produtoAtualizado = new ProdutosEntity();
@@ -127,7 +128,7 @@ class ProdutoGatewayTest {
         when(produtoMapper.toDTO(produtoAtualizado)).thenReturn(produtoDTO);
 
         // Act
-        ProdutoDTO resultado = produtoGateway.atualizarProdutoPorId(id, dto);
+        ProdutoDTO resultado = produtoGateway.atualizarProdutoPorId(id, domain);
 
         // Assert
         assertNotNull(resultado);
@@ -141,12 +142,12 @@ class ProdutoGatewayTest {
     void atualizarProdutoPorIdDeveLancarExcecaoQuandoProdutoNaoExiste() {
         // Arrange
         long id = 1L;
-        InsertAndUpdateProdutoDTO dto = mock(InsertAndUpdateProdutoDTO.class);
+        ProdutosDomain domain = mock(ProdutosDomain.class);
 
         when(produtoRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.atualizarProdutoPorId(id, dto));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.atualizarProdutoPorId(id, domain));
         assertEquals("Não foi possível identificar o produto com o ID " + id, exception.getMessage());
         verify(produtoRepository).findById(id);
     }

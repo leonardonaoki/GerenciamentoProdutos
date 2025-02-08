@@ -1,7 +1,7 @@
 package com.gerenciamentoclientes.clientes.app;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
 import com.gerenciamentoclientes.clientes.infrastructure.gateway.IClienteGateway;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class AtualizaClientePorIdUseCase {
 
     private final IClienteGateway clienteGateway;
 
-    public ClienteDTO atualizaClientePorId(long id, InsertAndUpdateClienteDTO dto) throws SystemBaseHandleException {
-        return clienteGateway.atualizarClientePorId(id, dto);
+    public ClienteDTO atualizaClientePorId(long id, ClienteDomain domain) throws SystemBaseHandleException {
+        return clienteGateway.atualizarClientePorId(id, domain);
     }
 }

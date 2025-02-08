@@ -1,8 +1,8 @@
 package com.gerenciamentoclientes.clientes.infrastructure.gateway;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.consumer.AtualizacaoClientesDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
 import org.springframework.data.domain.Page;
 
@@ -15,13 +15,10 @@ public interface IClienteGateway {
     ClienteDTO listarClientePorId(long id) throws SystemBaseHandleException;
 
     // Criar um novo cliente
-    ClienteDTO criarCliente(InsertAndUpdateClienteDTO dto);
+    ClienteDTO criarCliente(ClienteDomain dto);
 
     // Atualizar cliente por ID
-    ClienteDTO atualizarClientePorId(long id, InsertAndUpdateClienteDTO dto) throws SystemBaseHandleException;
-
-    // Atualizar a lista de clientes (por exemplo, com um DTO contendo múltiplos clientes)
-    void atualizarListaClientes(AtualizacaoClientesDTO dto);
+    ClienteDTO atualizarClientePorId(long id, ClienteDomain dto) throws SystemBaseHandleException;
 
     // Deletar cliente por ID
     void deletarClientePorId(long id) throws SystemBaseHandleException;

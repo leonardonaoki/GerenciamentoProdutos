@@ -1,8 +1,8 @@
 package com.gerenciamentoclientes.clientes.infrastructure.gateway;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.consumer.AtualizacaoClientesDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.infrastructure.entity.ClienteEntity;
 import com.gerenciamentoclientes.clientes.infrastructure.repository.IClienteRepository;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -38,55 +36,24 @@ public class ClienteGateway implements IClienteGateway {
     }
 
     @Override
-    public ClienteDTO criarCliente(InsertAndUpdateClienteDTO dto) {
+    public ClienteDTO criarCliente(ClienteDomain domain) {
         // Criando novo cliente a partir do DTO e mapeando para DTO de resposta
-        ClienteEntity clienteSalvo = clienteRepository.save(clienteMapper.toEntity(dto));
+        ClienteEntity clienteSalvo = clienteRepository.save(clienteMapper.toEntity(domain));
         return clienteMapper.toDTO(clienteSalvo);
     }
 
     @Override
-    public ClienteDTO atualizarClientePorId(long id, InsertAndUpdateClienteDTO dto) {
+    public ClienteDTO atualizarClientePorId(long id, ClienteDomain domain) {
         // Atualizando cliente existente
         ClienteEntity clienteEncontrado = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 
         // Atualizando as informações do cliente com os dados do DTO
-        clienteEncontrado.setNome(dto.nome());
-        clienteEncontrado.setEmail(dto.email());
+        clienteEncontrado.setNome(domain.getNome());
+        clienteEncontrado.setEmail(domain.getEmail());
 
         // Salvando e retornando o cliente atualizado
         return clienteMapper.toDTO(clienteRepository.save(clienteEncontrado));
-    }
-
-    @Override
-    public void atualizarListaClientes(AtualizacaoClientesDTO dto) {
-        // Ação de atualização em lote
-        boolean acaoAtualizar = dto.acao().toUpperCase().contains("ATUALIZAR");
-
-        // Lista de IDs dos clientes
-        List<Long> listaIds = dto.listaClientes().stream()
-                .map(ClienteDTO::id) // Extraindo IDs dos clientes
-                .toList();
-
-        // Buscando as entidades dos clientes no repositório
-        List<ClienteEntity> listaClientes = clienteRepository.findAllById(listaIds);
-
-        // Atualizando informações dos clientes
-        dto.listaClientes().forEach(clienteDTO ->
-                listaClientes.stream()
-                        .filter(clienteEntity -> clienteEntity.getId().equals(clienteDTO.id())) // Comparando IDs
-                        .findFirst()
-                        .ifPresent(clienteEntity -> {
-                            // Atualizando o nome e email dos clientes, por exemplo
-                            if (acaoAtualizar) {
-                                clienteEntity.setNome(clienteDTO.nome());
-                                clienteEntity.setEmail(clienteDTO.email());
-                            }
-                        })
-        );
-
-        // Salvando todos os clientes atualizados no repositório
-        clienteRepository.saveAll(listaClientes);
     }
 
     @Override

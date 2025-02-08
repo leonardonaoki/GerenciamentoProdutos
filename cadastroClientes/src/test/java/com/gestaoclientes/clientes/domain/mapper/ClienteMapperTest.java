@@ -2,6 +2,7 @@ package com.gestaoclientes.clientes.domain.mapper;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.domain.mapper.ClienteMapper;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.infrastructure.entity.ClienteEntity;
@@ -46,10 +47,11 @@ class ClienteMapperTest {
         String nomeTeste = "Nome Cliente";
         String emailTeste = "cliente@example.com";
 
-        InsertAndUpdateClienteDTO clienteDTO = new InsertAndUpdateClienteDTO(nomeTeste, emailTeste);
-
+        ClienteDomain clienteDomain = new ClienteDomain();
+        clienteDomain.setNome(nomeTeste);
+        clienteDomain.setEmail(emailTeste);
         // Act
-        ClienteEntity entity = clienteMapper.toEntity(clienteDTO);
+        ClienteEntity entity = clienteMapper.toEntity(clienteDomain);
 
         // Assert
         assertEquals(nomeTeste, entity.getNome());

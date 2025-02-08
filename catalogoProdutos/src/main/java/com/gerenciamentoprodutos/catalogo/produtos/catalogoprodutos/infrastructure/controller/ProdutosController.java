@@ -8,6 +8,8 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.P
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.ProdutosDomain;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +37,9 @@ public class ProdutosController implements IControllerDocumentation {
     private final CriarProdutoUseCase criarProdutoUseCase;
     private final AtualizaProdutoPorIdUseCase atualizaProdutoUseCase;
     private final DeletaProdutoPorIdUseCase deletaProdutoPorIdUseCase;
+
+    private final IProdutoMapper produtoMapper;
+
     public static final String NOME_ARQUIVO_PADRAO = "dados.csv";
     @Value("${carga.input-path}")
     private String diretorio;
@@ -73,10 +78,12 @@ public class ProdutosController implements IControllerDocumentation {
         }
     }
     @PostMapping()
+    @Override
     public ResponseEntity<ProductAndMessagesResponseDTO> criarProduto(
             @Valid @RequestBody(required = true) InsertAndUpdateProdutoDTO dto
     ) {
-        ProdutoDTO produtoInserido = criarProdutoUseCase.criarProduto(dto);
+        ProdutosDomain produtosDomain = produtoMapper.toDomain(dto);
+        ProdutoDTO produtoInserido = criarProdutoUseCase.criarProduto(produtosDomain);
         return ResponseEntity.ok().body(
                 new ProductAndMessagesResponseDTO(
                         produtoInserido,
@@ -89,8 +96,9 @@ public class ProdutosController implements IControllerDocumentation {
     public ResponseEntity<ProductAndMessagesResponseDTO> atualizarProdutoPorId(
             @PathVariable(value = "id",required = true) long id, @Valid @RequestBody(required = true) InsertAndUpdateProdutoDTO dto
     ) {
+        ProdutosDomain produtosDomain = produtoMapper.toDomain(dto);
         try{
-            ProdutoDTO produtoAtualizado = atualizaProdutoUseCase.atualizaProdutoPorId(id,dto);
+            ProdutoDTO produtoAtualizado = atualizaProdutoUseCase.atualizaProdutoPorId(id,produtosDomain);
             return ResponseEntity.ok().body(
                     new ProductAndMessagesResponseDTO(
                             produtoAtualizado,

@@ -2,6 +2,7 @@ package com.gestaoclientes.clientes.infrastructure.gateway;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.infrastructure.entity.ClienteEntity;
 import com.gerenciamentoclientes.clientes.infrastructure.gateway.ClienteGateway;
@@ -93,21 +94,21 @@ class ClienteGatewayTest {
     @Test
     void criarClienteDeveRetornarClienteDTO() {
         // Arrange
-        InsertAndUpdateClienteDTO dto = mock(InsertAndUpdateClienteDTO.class);
+        ClienteDomain domain = mock(ClienteDomain.class);
         ClienteEntity clienteSalvo = new ClienteEntity();
         ClienteDTO clienteDTO = new ClienteDTO(1L, "NomeTeste", "EmailTeste");
 
-        when(clienteMapper.toEntity(dto)).thenReturn(clienteSalvo);
+        when(clienteMapper.toEntity(domain)).thenReturn(clienteSalvo);
         when(clienteRepository.save(clienteSalvo)).thenReturn(clienteSalvo);
         when(clienteMapper.toDTO(clienteSalvo)).thenReturn(clienteDTO);
 
         // Act
-        ClienteDTO resultado = clienteGateway.criarCliente(dto);
+        ClienteDTO resultado = clienteGateway.criarCliente(domain);
 
         // Assert
         assertNotNull(resultado);
         assertEquals(clienteDTO, resultado);
-        verify(clienteMapper).toEntity(dto);
+        verify(clienteMapper).toEntity(domain);
         verify(clienteRepository).save(clienteSalvo);
         verify(clienteMapper).toDTO(clienteSalvo);
     }
@@ -116,7 +117,7 @@ class ClienteGatewayTest {
     void atualizarClientePorIdDeveRetornarClienteDTOQuandoClienteExiste() {
         // Arrange
         long id = 1L;
-        InsertAndUpdateClienteDTO dto = mock(InsertAndUpdateClienteDTO.class);
+        ClienteDomain domain = mock(ClienteDomain.class);
 
         ClienteEntity clienteEncontrado = new ClienteEntity();
         ClienteEntity clienteAtualizado = new ClienteEntity();
@@ -127,7 +128,7 @@ class ClienteGatewayTest {
         when(clienteMapper.toDTO(clienteAtualizado)).thenReturn(clienteDTO);
 
         // Act
-        ClienteDTO resultado = clienteGateway.atualizarClientePorId(id, dto);
+        ClienteDTO resultado = clienteGateway.atualizarClientePorId(id, domain);
 
         // Assert
         assertNotNull(resultado);
@@ -141,12 +142,12 @@ class ClienteGatewayTest {
     void atualizarClientePorIdDeveLancarExcecaoQuandoClienteNaoExiste() {
         // Arrange
         long id = 1L;
-        InsertAndUpdateClienteDTO dto = mock(InsertAndUpdateClienteDTO.class);
+        ClienteDomain domain = mock(ClienteDomain.class);
 
         when(clienteRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> clienteGateway.atualizarClientePorId(id, dto));
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> clienteGateway.atualizarClientePorId(id, domain));
         assertEquals("Não foi possível identificar o cliente com o ID " + id, exception.getMessage());
         verify(clienteRepository).findById(id);
     }

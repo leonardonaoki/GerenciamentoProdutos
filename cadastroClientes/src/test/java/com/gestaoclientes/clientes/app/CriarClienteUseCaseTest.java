@@ -3,6 +3,7 @@ package com.gestaoclientes.clientes.app;
 import com.gerenciamentoclientes.clientes.app.CriarClienteUseCase;
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.infrastructure.gateway.IClienteGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,21 +31,23 @@ class CriarClienteUseCaseTest {
 
     @Test
     void deveCriarClienteQuandoDadosValidos() {
-        // Dados de entrada (DTO) e cliente esperado
-        InsertAndUpdateClienteDTO clienteDTO = new InsertAndUpdateClienteDTO("Cliente Teste", "Rua Teste");
+
+        ClienteDomain clienteDomain = new ClienteDomain();
+        clienteDomain.setNome("Cliente Teste");
+        clienteDomain.setEmail("Rua Teste");
         ClienteDTO clienteEsperado = new ClienteDTO(1L, "Cliente Teste", "Rua Teste");
 
         // Configurando o mock para retornar o cliente quando o método for chamado
-        when(clienteGateway.criarCliente(clienteDTO)).thenReturn(clienteEsperado);
+        when(clienteGateway.criarCliente(clienteDomain)).thenReturn(clienteEsperado);
 
         // Chama o método que estamos testando
-        ClienteDTO clienteRetornado = criarClienteUseCase.criarCliente(clienteDTO);
+        ClienteDTO clienteRetornado = criarClienteUseCase.criarCliente(clienteDomain);
 
         // Verificação: garantir que o cliente retornado seja igual ao esperado
         assertNotNull(clienteRetornado);
         assertEquals(clienteEsperado, clienteRetornado);
 
         // Verifica se o método criarCliente do gateway foi chamado com o DTO correto
-        verify(clienteGateway, times(1)).criarCliente(clienteDTO);
+        verify(clienteGateway, times(1)).criarCliente(clienteDomain);
     }
 }

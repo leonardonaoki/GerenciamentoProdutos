@@ -7,6 +7,9 @@ import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.ListPedidosResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.PedidosAndMessagesResponseDTO;
+import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.mapper.IPedidoMapper;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +30,7 @@ public class PedidosController implements IControllerDocumentation{
     private final ListarPedidoPorIdUseCase listarPedidoPorIdUseCase;
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final AtualizaPedidoPorIdUseCase atualizaPedidoUseCase;
-
+    private final IPedidoMapper pedidoMapper;
     @GetMapping()
     @Override
     public ResponseEntity<ListPedidosResponseDTO> listarPedidos(
@@ -67,8 +70,9 @@ public class PedidosController implements IControllerDocumentation{
     public ResponseEntity<PedidosAndMessagesResponseDTO> criarPedido(
             @Valid @RequestBody(required = true) InsertPedidoDTO dto
     ){
+        InsertPedidoDomain domain = pedidoMapper.toInsertDomain(dto);
         try{
-            PedidoDTO pedidoInserido = criarPedidoUseCase.criarPedido(dto);
+            PedidoDTO pedidoInserido = criarPedidoUseCase.criarPedido(domain);
             return ResponseEntity.ok().body(
                     new PedidosAndMessagesResponseDTO(
                             pedidoInserido,
@@ -89,8 +93,9 @@ public class PedidosController implements IControllerDocumentation{
     public ResponseEntity<PedidosAndMessagesResponseDTO> atualizarPedidoPorId(
             @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) UpdatePedidoDTO dto
     ) {
+        UpdatePedidoDomain domain = pedidoMapper.toUpdateDomain(dto);
         try {
-            atualizaPedidoUseCase.atualizaPedidoPorId(id, dto);
+            atualizaPedidoUseCase.atualizaPedidoPorId(id, domain);
             return ResponseEntity.noContent().build();
         } catch (SystemBaseHandleException s) {
             return ResponseEntity.internalServerError().body(

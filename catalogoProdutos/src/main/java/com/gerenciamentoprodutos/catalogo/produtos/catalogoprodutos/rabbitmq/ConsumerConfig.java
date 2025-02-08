@@ -2,7 +2,7 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.rabbitmq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.AtualizaListaProdutoUseCase;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.consumer.AtualizacaoProdutosDTO;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.consumer.AtualizacaoProdutosDomain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ public class ConsumerConfig {
         return message -> {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                AtualizacaoProdutosDTO dto = objectMapper.readValue(message, AtualizacaoProdutosDTO.class);
+                AtualizacaoProdutosDomain dto = objectMapper.readValue(message, AtualizacaoProdutosDomain.class);
                 atualizaListaProdutoUseCase.atualizaListaProdutos(dto);
             } catch (Exception e) {
                 e.printStackTrace();

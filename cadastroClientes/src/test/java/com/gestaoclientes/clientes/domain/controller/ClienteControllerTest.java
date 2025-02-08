@@ -5,6 +5,7 @@ import com.gerenciamentoclientes.clientes.app.*;
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.response.ListaClientesResponseDTO;
+import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.infrastructure.controller.ClienteController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,8 @@ class ClienteControllerTest {
 
     @Mock
     private DeletaClientePorIdUseCase deletaClientePorIdUseCase;
+    @Mock
+    private IClienteMapper clienteMapper;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;

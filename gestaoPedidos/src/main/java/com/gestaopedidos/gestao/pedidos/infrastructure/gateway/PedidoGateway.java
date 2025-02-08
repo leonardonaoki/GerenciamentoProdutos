@@ -4,6 +4,8 @@ import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IItensPedidoMapper;
@@ -68,12 +70,12 @@ public class PedidoGateway implements IPedidoGateway {
 
     @Override
     @Transactional
-    public PedidoDTO criarPedido(InsertPedidoDTO insertDTO, BigDecimal valorTotal) {
+    public PedidoDTO criarPedido(InsertPedidoDomain insertDTO, BigDecimal valorTotal) {
         PedidosEntity pedidoASalvar = pedidoMapper.toEntity(insertDTO);
         pedidoASalvar.setPrecoFinal(valorTotal);
         PedidosEntity pedidoCriado = pedidoRepository.save(pedidoASalvar);
         long idPedido = pedidoCriado.getIdPedido();
-        insertDTO.listaProdutos().stream().forEach(p -> {
+        insertDTO.getListaProdutos().stream().forEach(p -> {
             ItensPedidosEntity itensPedido = new ItensPedidosEntity();
             itensPedido.setIdPedido(idPedido);
             itensPedido.setIdProduto(p.getIdProduto());
@@ -81,13 +83,13 @@ public class PedidoGateway implements IPedidoGateway {
             itensPedidoRepository.save(itensPedido);
         });
 
-        estoqueProducer.atualizaEstoque(insertDTO.listaProdutos(),AcaoEstoqueEnum.BAIXAR_ESTOQUE);
+        estoqueProducer.atualizaEstoque(insertDTO.getListaProdutos(),AcaoEstoqueEnum.BAIXAR_ESTOQUE);
 
         PedidoDTO pedidoDTO = new PedidoDTO();
         pedidoDTO.setIdPedido(pedidoCriado.getIdPedido());
         pedidoDTO.setStatus(pedidoCriado.getStatus());
         pedidoDTO.setIdCliente(pedidoCriado.getIdCliente());
-        pedidoDTO.setListaProdutos(insertDTO.listaProdutos());
+        pedidoDTO.setListaProdutos(insertDTO.getListaProdutos());
         pedidoDTO.setCep(pedidoCriado.getCep());
         pedidoDTO.setLatitude(pedidoCriado.getLatitude());
         pedidoDTO.setLongitude(pedidoCriado.getLongitude());
@@ -96,7 +98,7 @@ public class PedidoGateway implements IPedidoGateway {
     }
 
     @Override
-    public void atualizarStatusPedidoPorId(long id, UpdatePedidoDTO dto) throws SystemBaseHandleException {
+    public void atualizarStatusPedidoPorId(long id, UpdatePedidoDomain domain) throws SystemBaseHandleException {
         PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 
@@ -104,13 +106,13 @@ public class PedidoGateway implements IPedidoGateway {
                 pedidoEncontrado.getStatus().equals(StatusEnum.CONCLUIDO.name()))
             throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
 
-        pedidoEncontrado.setStatus(dto.status().name());
-        pedidoEncontrado.setCep(dto.CEP());
-        pedidoEncontrado.setLatitude(dto.Latitude());
-        pedidoEncontrado.setLongitude(dto.Longitude());
+        pedidoEncontrado.setStatus(domain.getStatus().name());
+        pedidoEncontrado.setCep(domain.getCEP());
+        pedidoEncontrado.setLatitude(domain.getLatitude());
+        pedidoEncontrado.setLongitude(domain.getLongitude());
         pedidoRepository.save(pedidoEncontrado);
 
-        if(dto.status().name().equals(StatusEnum.CANCELADO.name())){
+        if(domain.getStatus().name().equals(StatusEnum.CANCELADO.name())){
             List<ItensPedidosEntity> listaItens = itensPedidoRepository.findByIdPedido(id);
             List<ProdutoDTO> listaProdutos = new ArrayList<>();
             listaItens.stream().forEach(

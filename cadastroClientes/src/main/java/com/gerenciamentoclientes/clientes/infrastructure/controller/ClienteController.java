@@ -6,6 +6,8 @@ import com.gerenciamentoclientes.clientes.domain.dto.ResponseDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.response.ClienteAndMessagesResponseDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.response.ListaClientesResponseDTO;
+import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
+import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,7 +31,7 @@ public class ClienteController implements IControllerDocumentation {
     private final CriarClienteUseCase criarClienteUseCase;
     private final AtualizaClientePorIdUseCase atualizaClienteUseCase;
     private final DeletaClientePorIdUseCase deletaClientePorIdUseCase;
-
+    private final IClienteMapper clienteMapper;
     @GetMapping()
     @Override
     public ResponseEntity<ListaClientesResponseDTO> listarClientes(
@@ -68,7 +70,8 @@ public class ClienteController implements IControllerDocumentation {
     @Override
     public ResponseEntity<ClienteAndMessagesResponseDTO> criarCliente(
             @Valid @RequestBody(required = true) InsertAndUpdateClienteDTO dto) {
-        ClienteDTO clienteInserido = criarClienteUseCase.criarCliente(dto);
+        ClienteDomain domain = clienteMapper.toDomain(dto);
+        ClienteDTO clienteInserido = criarClienteUseCase.criarCliente(domain);
         return ResponseEntity.ok().body(
                 new ClienteAndMessagesResponseDTO(
                         clienteInserido,
@@ -81,8 +84,9 @@ public class ClienteController implements IControllerDocumentation {
     @Override
     public ResponseEntity<ClienteAndMessagesResponseDTO> atualizarClientePorId(
             @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) InsertAndUpdateClienteDTO dto) {
+        ClienteDomain domain = clienteMapper.toDomain(dto);
         try {
-            ClienteDTO clienteAtualizado = atualizaClienteUseCase.atualizaClientePorId(id, dto);
+            ClienteDTO clienteAtualizado = atualizaClienteUseCase.atualizaClientePorId(id, domain);
             return ResponseEntity.ok().body(
                     new ClienteAndMessagesResponseDTO(
                             clienteAtualizado,

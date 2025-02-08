@@ -1,6 +1,7 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway;
 
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.consumer.AtualizacaoProdutosDTO;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.ProdutosDomain;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.consumer.AtualizacaoProdutosDomain;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.request.InsertAndUpdateProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
@@ -34,36 +35,36 @@ public class ProdutoGateway implements IProdutoGateway{
     }
 
     @Override
-    public ProdutoDTO criarProduto(InsertAndUpdateProdutoDTO dto) {
-        ProdutosEntity produtoSalvo = produtoRepository.save(produtoMapper.toEntity(dto));
+    public ProdutoDTO criarProduto(ProdutosDomain produtosDomain) {
+        ProdutosEntity produtoSalvo = produtoRepository.save(produtoMapper.toEntity(produtosDomain));
         return produtoMapper.toDTO(produtoSalvo);
     }
 
     @Override
-    public ProdutoDTO atualizarProdutoPorId(long id,InsertAndUpdateProdutoDTO dto){
+    public ProdutoDTO atualizarProdutoPorId(long id,ProdutosDomain produtosDomain){
         ProdutosEntity produtoEncontrado = produtoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
-        produtoEncontrado.setDescricao(dto.Descricao());
-        produtoEncontrado.setPreco(dto.Preco());
-        produtoEncontrado.setQuantidadeEstoque(dto.QuantidadeEstoque());
+        produtoEncontrado.setDescricao(produtosDomain.getDescricao());
+        produtoEncontrado.setPreco(produtosDomain.getPreco());
+        produtoEncontrado.setQuantidadeEstoque(produtosDomain.getQuantidadeEstoque());
         return produtoMapper.toDTO(produtoRepository.save(produtoEncontrado));
     }
     @Override
-    public void atualizarListaProdutos(AtualizacaoProdutosDTO dto){
-        boolean baixarEstoque = dto.acao().toUpperCase().contains("BAIXAR");
-        List<Long> listaIds = dto.listaProdutos().stream()
+    public void atualizarListaProdutos(AtualizacaoProdutosDomain atualizacaoProdutosDomain){
+        boolean baixarEstoque = atualizacaoProdutosDomain.acao().toUpperCase().contains("BAIXAR");
+        List<Long> listaIds = atualizacaoProdutosDomain.listaProdutos().stream()
                 .map(p -> p.idProduto())
                 .toList();
         List<ProdutosEntity> listaProdutos = produtoRepository.findAllById(listaIds);
 
-        dto.listaProdutos().forEach(produtoDTO ->
+        atualizacaoProdutosDomain.listaProdutos().forEach(produto ->
             listaProdutos.stream()
-                    .filter(produtoEntity -> produtoEntity.getId() == produtoDTO.idProduto())
+                    .filter(produtoEntity -> produtoEntity.getId() == produto.idProduto())
                     .findFirst()
                     .ifPresent(produtoEntity -> {
                         long novaQuantidade = baixarEstoque?
-                                produtoEntity.getQuantidadeEstoque() - produtoDTO.quantidadeDesejada() :
-                                produtoEntity.getQuantidadeEstoque() + produtoDTO.quantidadeDesejada();
+                                produtoEntity.getQuantidadeEstoque() - produto.quantidadeDesejada() :
+                                produtoEntity.getQuantidadeEstoque() + produto.quantidadeDesejada();
                         produtoEntity.setQuantidadeEstoque(novaQuantidade);
                     })
         );
