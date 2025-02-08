@@ -22,41 +22,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/pedidos")
 @RequiredArgsConstructor
-public class PedidosController {
+public class PedidosController implements IControllerDocumentation{
     private final ListarPedidosUseCase listarPedidosUseCase;
     private final ListarPedidoPorIdUseCase listarPedidoPorIdUseCase;
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final AtualizaPedidoPorIdUseCase atualizaPedidoUseCase;
 
     @GetMapping()
-    @Operation(
-            operationId = "ListarPedidos",
-            summary = "Lista os pedidos existentes de forma paginada",
-            description = "Esse endpoint lista os pedidos existentes de forma paginada",
-            tags = "GestaoPedidos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = ListPedidosResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = ResponseDTO.class)
-                                    )
-                            }
-                    )
-            }
-    )
+    @Override
     public ResponseEntity<ListPedidosResponseDTO> listarPedidos(
             @RequestParam(value = "_offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "_limit", required = false, defaultValue = "10") int limit) {
@@ -70,44 +43,7 @@ public class PedidosController {
     }
 
     @GetMapping("/{id}")
-    @Operation(
-            operationId = "ListarPedidosPorId",
-            summary = "Lista o pedido por ID",
-            description = "Esse endpoint lista o pedido por ID",
-            tags = "GestaoPedidos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Bad Request",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    )
-            }
-    )
+    @Override
     public ResponseEntity<PedidosAndMessagesResponseDTO> listarPedidosPorId(@PathVariable(value = "id", required = true) int id) {
         try {
             PedidoDTO pedidoEncontrado = listarPedidoPorIdUseCase.listarPedidoPorId(id);
@@ -127,34 +63,7 @@ public class PedidosController {
     }
 
     @PostMapping()
-    @Operation(
-            operationId = "CriarPedido",
-            summary = "Cria um pedido",
-            description = "Esse endpoint cria um pedido",
-            tags = "GestaoPedidos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    )
-            }
-    )
+    @Override
     public ResponseEntity<PedidosAndMessagesResponseDTO> criarPedido(
             @Valid @RequestBody(required = true) InsertPedidoDTO dto
     ){
@@ -176,34 +85,7 @@ public class PedidosController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(
-            operationId = "AtualizarPedido",
-            summary = "Atualiza um pedido",
-            description = "Esse endpoint atualiza um pedido",
-            tags = "GestaoPedidos",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = PedidosAndMessagesResponseDTO.class)
-                                    )
-                            }
-                    )
-            }
-    )
+    @Override
     public ResponseEntity<PedidosAndMessagesResponseDTO> atualizarPedidoPorId(
             @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) UpdatePedidoDTO dto
     ) {
