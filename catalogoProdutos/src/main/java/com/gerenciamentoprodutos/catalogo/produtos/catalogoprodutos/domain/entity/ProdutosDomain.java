@@ -1,5 +1,6 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

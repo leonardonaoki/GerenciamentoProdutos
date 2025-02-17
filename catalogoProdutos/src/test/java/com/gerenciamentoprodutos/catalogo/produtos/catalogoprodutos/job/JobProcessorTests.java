@@ -6,11 +6,10 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructu
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JobProcessorTests {
     private ProdutosProcessor produtoProcessor;

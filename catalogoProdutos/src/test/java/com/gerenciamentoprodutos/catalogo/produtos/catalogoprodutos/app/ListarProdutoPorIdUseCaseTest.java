@@ -11,8 +11,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ListarProdutoPorIdUseCaseTest {
 

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.batch.item.file.transform.FieldSet;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 class JobProdutoMapperTests {

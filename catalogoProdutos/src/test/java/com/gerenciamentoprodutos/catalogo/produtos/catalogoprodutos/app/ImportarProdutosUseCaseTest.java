@@ -1,20 +1,24 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app;
 
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller.ProdutosController;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
+
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller.ProdutosController;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IFileGateway;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IProdutoJobGateway;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import org.springframework.http.HttpStatus;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class ImportarProdutosUseCaseTest {

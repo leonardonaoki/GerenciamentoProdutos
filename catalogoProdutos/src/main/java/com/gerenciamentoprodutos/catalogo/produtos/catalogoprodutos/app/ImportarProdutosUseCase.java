@@ -5,6 +5,7 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entit
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IFileGateway;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IProdutoJobGateway;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

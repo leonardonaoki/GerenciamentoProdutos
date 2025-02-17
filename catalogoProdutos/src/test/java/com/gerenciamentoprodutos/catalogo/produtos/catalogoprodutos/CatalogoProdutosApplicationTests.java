@@ -1,13 +1,13 @@
 package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 class CatalogoProdutosApplicationTests {
-
     @Test
-    void contextLoads() {
-        // Verifica se o contexto da aplicação carrega corretamente
+    void deveExecutarAplicacaoNormalmente(){
+        assertDoesNotThrow(() -> CatalogoProdutosApplication.main(new String[]{}));
     }
 }
