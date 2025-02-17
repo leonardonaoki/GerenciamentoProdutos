@@ -2,7 +2,6 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app;
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.responses.ListProdutosResponseDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.gateway.IProdutoGateway;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

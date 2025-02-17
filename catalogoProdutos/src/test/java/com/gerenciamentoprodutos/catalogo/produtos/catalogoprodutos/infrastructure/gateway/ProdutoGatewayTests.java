@@ -2,6 +2,8 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastruct
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.ProdutoDTO;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.ProdutosDomain;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.consumer.AtualizacaoProdutosDomain;
+import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.consumer.ListaProdutosDomain;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.entityjpa.ProdutosEntity;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.repository.IProdutoRepository;
@@ -46,7 +48,7 @@ class ProdutoGatewayTest {
         Page<ProdutosEntity> produtosPage = new PageImpl<>(produtos);
 
         when(produtoRepository.findAll(pageRequest)).thenReturn(produtosPage);
-        when(produtoMapper.toDTO(any(ProdutosEntity.class))).thenReturn(new ProdutoDTO(1,"DescricaoTeste",new BigDecimal(100),300));
+        when(produtoMapper.toDTO(any(ProdutosEntity.class))).thenReturn(new ProdutoDTO(1, "DescricaoTeste", new BigDecimal(100), 300));
 
         // Act
         Page<ProdutoDTO> resultado = produtoGateway.listarProdutos(offset, limit);
@@ -59,11 +61,11 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void listarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste(){
+    void listarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste() {
         // Arrange
         long id = 1L;
         ProdutosEntity produtoEntity = new ProdutosEntity();
-        ProdutoDTO produtoDTO = new ProdutoDTO(id,"DescricaoTeste",new BigDecimal(100),300);
+        ProdutoDTO produtoDTO = new ProdutoDTO(id, "DescricaoTeste", new BigDecimal(100), 300);
 
         when(produtoRepository.findById(id)).thenReturn(Optional.of(produtoEntity));
         when(produtoMapper.toDTO(produtoEntity)).thenReturn(produtoDTO);
@@ -93,10 +95,9 @@ class ProdutoGatewayTest {
     @Test
     void criarProdutoDeveRetornarProdutoDTO() {
         // Arrange
-
         ProdutosDomain domain = mock(ProdutosDomain.class);
         ProdutosEntity produtoSalvo = new ProdutosEntity();
-        ProdutoDTO produtoDTO = new ProdutoDTO(1,"DescricaoTeste",new BigDecimal(100),300);
+        ProdutoDTO produtoDTO = new ProdutoDTO(1, "DescricaoTeste", new BigDecimal(100), 300);
 
         when(produtoMapper.toEntity(domain)).thenReturn(produtoSalvo);
         when(produtoRepository.save(produtoSalvo)).thenReturn(produtoSalvo);
@@ -114,14 +115,14 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void atualizarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste(){
+    void atualizarProdutoPorIdDeveRetornarProdutoDTOQuandoProdutoExiste() {
         // Arrange
         long id = 1L;
         ProdutosDomain domain = mock(ProdutosDomain.class);
 
         ProdutosEntity produtoEncontrado = new ProdutosEntity();
         ProdutosEntity produtoAtualizado = new ProdutosEntity();
-        ProdutoDTO produtoDTO = new ProdutoDTO(1,"DescricaoTeste",new BigDecimal(100),300);
+        ProdutoDTO produtoDTO = new ProdutoDTO(1, "DescricaoTeste", new BigDecimal(100), 300);
 
         when(produtoRepository.findById(id)).thenReturn(Optional.of(produtoEncontrado));
         when(produtoRepository.save(produtoEncontrado)).thenReturn(produtoAtualizado);
@@ -153,7 +154,7 @@ class ProdutoGatewayTest {
     }
 
     @Test
-    void deletarProdutoPorIdDeveExcluirProdutoQuandoProdutoExiste(){
+    void deletarProdutoPorIdDeveExcluirProdutoQuandoProdutoExiste() {
         // Arrange
         long id = 1L;
         when(produtoRepository.existsById(id)).thenReturn(true);
@@ -176,5 +177,37 @@ class ProdutoGatewayTest {
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> produtoGateway.deletarProdutoPorId(id));
         assertEquals("Não foi possível identificar o produto com o ID " + id, exception.getMessage());
         verify(produtoRepository).existsById(id);
+    }
+
+    @Test
+    void atualizarListaProdutosDeveAtualizarQuantidadeEstoque() {
+        // Arrange
+        AtualizacaoProdutosDomain atualizacaoProdutosDomain = mock(AtualizacaoProdutosDomain.class);
+        when(atualizacaoProdutosDomain.acao()).thenReturn("BAIXAR");
+
+        // Agora instanciamos ListaProdutosDomain ao invés de InsertAndUpdateProdutoDTO
+        List<ListaProdutosDomain> listaProdutos = List.of(
+                new ListaProdutosDomain(1L, 10), // idProduto 1, quantidadeDesejada 10
+                new ListaProdutosDomain(2L, 5)   // idProduto 2, quantidadeDesejada 5
+        );
+        when(atualizacaoProdutosDomain.listaProdutos()).thenReturn(listaProdutos);
+
+        // Mockando os produtos na base
+        ProdutosEntity produto1 = new ProdutosEntity();
+        produto1.setId(1L);
+        produto1.setQuantidadeEstoque(50);
+        ProdutosEntity produto2 = new ProdutosEntity();
+        produto2.setId(2L);
+        produto2.setQuantidadeEstoque(100);
+
+        when(produtoRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(produto1, produto2));
+
+        // Act
+        produtoGateway.atualizarListaProdutos(atualizacaoProdutosDomain);
+
+        // Assert
+        assertEquals(40, produto1.getQuantidadeEstoque());  // 50 - 10 = 40
+        assertEquals(95, produto2.getQuantidadeEstoque());  // 100 - 5 = 95
+        verify(produtoRepository).saveAll(List.of(produto1, produto2));
     }
 }

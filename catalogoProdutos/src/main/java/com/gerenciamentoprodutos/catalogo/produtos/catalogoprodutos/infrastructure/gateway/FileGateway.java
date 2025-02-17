@@ -2,7 +2,6 @@ package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastruct
 
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
