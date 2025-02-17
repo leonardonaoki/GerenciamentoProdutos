@@ -3,7 +3,12 @@ package com.gestaopedidos.gestao.pedidos.domain.mapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IProdutoGateway;
@@ -13,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 class PedidoMapperTest {
 
@@ -64,5 +70,32 @@ class PedidoMapperTest {
         assertEquals("12345-678", entity.getCep());
         assertEquals(12.345678, entity.getLatitude());
         assertEquals(98.765432, entity.getLongitude());
+    }
+    @Test
+    void testToInsertDomain() {
+        ProdutoDTO produto1 = new ProdutoDTO();
+        produto1.setIdProduto(1L);
+        produto1.setQuantidadeDesejada(300L);
+        InsertPedidoDTO pedidoDTO = new InsertPedidoDTO(1L, List.of(produto1),"12345-678",12.345678,98.765432);
+        InsertPedidoDomain domain = pedidoMapper.toInsertDomain(pedidoDTO);
+
+        assertEquals(1, domain.getIdCliente());
+        assertEquals("12345-678", domain.getCep());
+        assertEquals(12.345678, domain.getLatitude());
+        assertEquals(98.765432, domain.getLongitude());
+    }
+    @Test
+    void testToUpdateDomain() {
+        ProdutoDTO produto1 = new ProdutoDTO();
+        produto1.setIdProduto(1L);
+        produto1.setQuantidadeDesejada(300L);
+
+        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.EM_CURSO,"12345-678",12.345678,98.765432);
+        UpdatePedidoDomain domain = pedidoMapper.toUpdateDomain(dto);
+
+        assertEquals(StatusEnum.EM_CURSO, domain.getStatus());
+        assertEquals("12345-678", domain.getCep());
+        assertEquals(12.345678, domain.getLatitude());
+        assertEquals(98.765432, domain.getLongitude());
     }
 }

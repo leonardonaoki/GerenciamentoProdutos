@@ -2,7 +2,6 @@ package com.gestaopedidos.gestao.pedidos.infrastructure.controller;
 
 import com.gestaopedidos.gestao.pedidos.app.*;
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.ResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.ListPedidosResponseDTO;
@@ -11,10 +10,6 @@ import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IPedidoMapper;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

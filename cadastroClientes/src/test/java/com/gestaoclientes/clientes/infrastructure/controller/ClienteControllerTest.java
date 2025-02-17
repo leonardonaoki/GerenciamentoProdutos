@@ -1,4 +1,4 @@
-package com.gestaoclientes.clientes.domain.controller;
+package com.gestaoclientes.clientes.infrastructure.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciamentoclientes.clientes.app.*;
@@ -6,6 +6,7 @@ import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.dto.response.ListaClientesResponseDTO;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
+import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
 import com.gerenciamentoclientes.clientes.infrastructure.controller.ClienteController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 class ClienteControllerTest {
 
@@ -55,7 +57,6 @@ class ClienteControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(clienteController).build();
         objectMapper = new ObjectMapper();
     }
-
     @Test
     void listarClientesDeveExecutarListarClientesUseCase() throws Exception {
         List<ClienteDTO> listaClientesDTO = new ArrayList<>();
@@ -73,6 +74,22 @@ class ClienteControllerTest {
     }
 
     @Test
+    void listarClientesDeveAlterarOffSetELimit() throws Exception {
+        List<ClienteDTO> listaClientesDTO = new ArrayList<>();
+        listaClientesDTO.add(new ClienteDTO(1L,"NomeCliente", "email@teste.com"));
+        Page<ClienteDTO> page = new PageImpl<>(listaClientesDTO);
+
+        ListaClientesResponseDTO responseDTO = new ListaClientesResponseDTO(page);
+        when(listarClientesUseCase.listarClientes(0, -10)).thenReturn(responseDTO);
+
+        mockMvc.perform(get("/clientes")
+                .param("_offset", "-1")
+                .param("_limit", "-1"));
+
+        verify(listarClientesUseCase, times(1)).listarClientes(0, 10);
+    }
+
+    @Test
     void listarClientesPorIdDeveExecutarListarClientePorIDUseCase() throws Exception {
         ClienteDTO clienteDTO = new ClienteDTO(1L, "NomeCliente", "email@teste.com");
         when(listarClientePorIdUseCase.listarClientePorId(1)).thenReturn(clienteDTO);
@@ -81,7 +98,15 @@ class ClienteControllerTest {
 
         verify(listarClientePorIdUseCase, times(1)).listarClientePorId(1);
     }
+    @Test
+    void listarClientesPorIdDeveExibirSystemBaseExceptionCorretamente() throws Exception {
+        when(listarClientePorIdUseCase.listarClientePorId(1))
+                .thenThrow(new SystemBaseHandleException("Erro"));
 
+        mockMvc.perform(get("/clientes/1"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("{\"Cliente\":null,\"HttpStatusCode\":400,\"Message\":\"Erro\"}")); // Verifica o corpo da resposta
+    }
     @Test
     void criarClienteDeveExecutarCriarClienteUseCase() throws Exception {
         InsertAndUpdateClienteDTO dto = new InsertAndUpdateClienteDTO("NomeCliente", "email@teste.com");
@@ -107,7 +132,18 @@ class ClienteControllerTest {
 
         verify(atualizaClientePorIdUseCase, times(1)).atualizaClientePorId(eq(1L), any());
     }
+    @Test
+    void atualizarProdutoPorIdDeveExibirSystemBaseExceptionCorretamente() throws Exception {
+        InsertAndUpdateClienteDTO dto = new InsertAndUpdateClienteDTO("NomeCliente", "email@teste.com");
+        when(atualizaClientePorIdUseCase.atualizaClientePorId(eq(1L),any()))
+                .thenThrow(new SystemBaseHandleException("Erro"));
 
+        mockMvc.perform(put("/clientes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("{\"Cliente\":null,\"HttpStatusCode\":400,\"Message\":\"Erro\"}")); // Verifica o corpo da resposta
+    }
     @Test
     void deletaClientePorIdDeveExecutarDeletaClientePorIdUseCase() throws Exception {
         doNothing().when(deletaClientePorIdUseCase).deletaClientePorId(1L);
@@ -115,5 +151,11 @@ class ClienteControllerTest {
         mockMvc.perform(delete("/clientes/1"));
 
         verify(deletaClientePorIdUseCase, times(1)).deletaClientePorId(1L);
+    }
+    @Test
+    void deletaClientePorIdDeveExibirSystemBaseExceptionCorretamente() throws Exception {
+        doThrow(new SystemBaseHandleException("Erro")).when(deletaClientePorIdUseCase).deletaClientePorId(1L);
+        mockMvc.perform(delete("/clientes/1"))
+                .andExpect(content().string("{\"HttpStatusCode\":400,\"Message\":\"Erro\"}")); // Verifica o corpo da resposta
     }
 }

@@ -1,4 +1,4 @@
-package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.controller;
+package com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.app.*;
@@ -9,7 +9,6 @@ import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.dto.r
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.entity.CsvFile;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.domain.mapper.IProdutoMapper;
 import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.exception.SystemBaseHandleException;
-import com.gerenciamentoprodutos.catalogo.produtos.catalogoprodutos.infrastructure.controller.ProdutosController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -72,7 +71,7 @@ class ProdutosControllerTests {
         objectMapper = new ObjectMapper();
     }
     @Test
-    void deveRetornarUmBadRequestSeArquivoForVazio() throws SystemBaseHandleException {
+    void deveRetornarUmBadRequestSeArquivoForVazio(){
         fileTeste = new MockMultipartFile("upload.csv",new byte[]{});
 
         ResponseEntity<?> response = produtosController.importaProdutosCSV(fileTeste);
@@ -82,7 +81,7 @@ class ProdutosControllerTests {
         assertEquals("Arquivo vazio!",mensagem.Message());
     }
     @Test
-    void deveRetornarUmBadRequestSeArquivoNaoForCSV() throws SystemBaseHandleException {
+    void deveRetornarUmBadRequestSeArquivoNaoForCSV(){
         fileTeste = new MockMultipartFile("upload.xml",new byte[]{1});
         ResponseEntity<?> response = produtosController.importaProdutosCSV(fileTeste);
         ResponseDTO mensagem = (ResponseDTO) response.getBody();
@@ -108,7 +107,7 @@ class ProdutosControllerTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
-    void deveExibirUmErroAoNaoConseguirReceberOsBytes() throws IOException, SystemBaseHandleException {
+    void deveExibirUmErroAoNaoConseguirReceberOsBytes() throws IOException {
         MultipartFile mockFileTeste = mock(MultipartFile.class);
 
         when(mockFileTeste.isEmpty()).thenReturn(false);
@@ -222,5 +221,17 @@ class ProdutosControllerTests {
         doThrow(new SystemBaseHandleException("Erro")).when(deletaProdutoPorIdUseCase).deletaProdutoPorId(1L);
         mockMvc.perform(delete("/produtos/1"))
                 .andExpect(content().string("{\"HttpStatusCode\":400,\"Message\":\"Erro\"}")); // Verifica o corpo da resposta
+    }
+    @Test
+    void testImportaProdutosCSV_ErroDeSistema() throws SystemBaseHandleException {
+        fileTeste = new MockMultipartFile("upload.csv", "upload.csv", "multipart/form-data", new byte[]{1});
+
+        when(importarProdutosUseCase.salvar(any())).thenReturn(new ResponseDTO(HttpStatus.OK.value(), ""));
+        when(importarProdutosUseCase.salvar(any(CsvFile.class)))
+                .thenThrow(new SystemBaseHandleException("Erro no sistema"));
+
+        ResponseEntity<ResponseDTO> response = produtosController.importaProdutosCSV(fileTeste);
+
+        assertEquals(500, response.getStatusCode().value());
     }
 }

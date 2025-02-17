@@ -1,7 +1,6 @@
 package com.gerenciamentoclientes.clientes.infrastructure.gateway;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,6 @@
 package com.gestaopedidos.gestao.pedidos.infrastructure.gateway;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
@@ -107,7 +105,7 @@ public class PedidoGateway implements IPedidoGateway {
             throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
 
         pedidoEncontrado.setStatus(domain.getStatus().name());
-        pedidoEncontrado.setCep(domain.getCEP());
+        pedidoEncontrado.setCep(domain.getCep());
         pedidoEncontrado.setLatitude(domain.getLatitude());
         pedidoEncontrado.setLongitude(domain.getLongitude());
         pedidoRepository.save(pedidoEncontrado);

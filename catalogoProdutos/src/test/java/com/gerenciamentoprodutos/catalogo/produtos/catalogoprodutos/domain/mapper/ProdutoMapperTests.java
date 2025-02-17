@@ -56,4 +56,17 @@ class ProdutoMapperTests {
         assertEquals(entity.getDescricao(),descTeste);
         assertEquals(entity.getQuantidadeEstoque(),quantidadeEstoqueTeste);
     }
+    @Test
+    void deveTransformarCorretamenteParaDomain(){
+        String descTeste = "Descrição Teste";
+        BigDecimal precoTeste = new BigDecimal("21.76");
+        long quantidadeEstoqueTeste = 300;
+
+        InsertAndUpdateProdutoDTO produtosDomain = new InsertAndUpdateProdutoDTO(descTeste,precoTeste,quantidadeEstoqueTeste);
+
+        ProdutosDomain entity = produtoMapper.toDomain(produtosDomain);
+        assertEquals(entity.getPreco(),precoTeste);
+        assertEquals(entity.getDescricao(),descTeste);
+        assertEquals(entity.getQuantidadeEstoque(),quantidadeEstoqueTeste);
+    }
 }

@@ -52,11 +52,7 @@ public class PedidoMapper implements IPedidoMapper{
 
     @Override
     public UpdatePedidoDomain toUpdateDomain(UpdatePedidoDTO updatePedidoDTO) {
-        UpdatePedidoDomain domain = new UpdatePedidoDomain();
-        domain.setStatus(updatePedidoDTO.status());
-        domain.setCEP(updatePedidoDTO.CEP());
-        domain.setLatitude(updatePedidoDTO.Latitude());
-        domain.setLongitude(updatePedidoDTO.Longitude());
-        return domain;
+        return new UpdatePedidoDomain(updatePedidoDTO.status(), updatePedidoDTO.CEP(),
+                updatePedidoDTO.Latitude(), updatePedidoDTO.Longitude());
     }
 }

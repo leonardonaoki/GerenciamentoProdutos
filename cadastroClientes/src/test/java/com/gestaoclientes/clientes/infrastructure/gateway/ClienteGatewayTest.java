@@ -1,7 +1,6 @@
 package com.gestaoclientes.clientes.infrastructure.gateway;
 
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.infrastructure.entity.ClienteEntity;

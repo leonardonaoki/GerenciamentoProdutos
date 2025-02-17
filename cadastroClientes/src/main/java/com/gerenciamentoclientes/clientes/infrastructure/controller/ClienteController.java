@@ -9,10 +9,6 @@ import com.gerenciamentoclientes.clientes.domain.dto.response.ListaClientesRespo
 import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.domain.mapper.IClienteMapper;
 import com.gerenciamentoclientes.clientes.exception.SystemBaseHandleException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

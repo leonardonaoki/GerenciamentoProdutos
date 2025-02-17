@@ -57,4 +57,19 @@ class ClienteMapperTest {
         assertEquals(nomeTeste, entity.getNome());
         assertEquals(emailTeste, entity.getEmail());
     }
+    @Test
+    void deveTransformarCorretamenteParaDomain(){
+        // Arrange
+        String nomeTeste = "Nome Cliente";
+        String emailTeste = "cliente@example.com";
+
+        InsertAndUpdateClienteDTO dto = new InsertAndUpdateClienteDTO(nomeTeste,emailTeste);
+
+        // Act
+        ClienteDomain entity = clienteMapper.toDomain(dto);
+
+        // Assert
+        assertEquals(nomeTeste, entity.getNome());
+        assertEquals(emailTeste, entity.getEmail());
+    }
 }

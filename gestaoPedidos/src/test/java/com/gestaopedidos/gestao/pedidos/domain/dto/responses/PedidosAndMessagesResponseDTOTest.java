@@ -15,17 +15,17 @@ class PedidosAndMessagesResponseDTOTest {
         PedidosAndMessagesResponseDTO responseDTO = new PedidosAndMessagesResponseDTO(produto, httpStatusCode, message);
 
         assertNotNull(responseDTO);
-        assertEquals(produto, responseDTO.Produto());
+        assertEquals(produto, responseDTO.Pedido());
         assertEquals(httpStatusCode, responseDTO.HttpStatusCode());
         assertEquals(message, responseDTO.Message());
     }
 
     @Test
     void testGetProduto() {
-        PedidoDTO produto = new PedidoDTO(); // Assuming a default constructor exists
-        PedidosAndMessagesResponseDTO responseDTO = new PedidosAndMessagesResponseDTO(produto, 200, "Success");
+        PedidoDTO pedido = new PedidoDTO(); // Assuming a default constructor exists
+        PedidosAndMessagesResponseDTO responseDTO = new PedidosAndMessagesResponseDTO(pedido, 200, "Success");
 
-        assertEquals(produto, responseDTO.Produto());
+        assertEquals(pedido, responseDTO.Pedido());
     }
 
     @Test

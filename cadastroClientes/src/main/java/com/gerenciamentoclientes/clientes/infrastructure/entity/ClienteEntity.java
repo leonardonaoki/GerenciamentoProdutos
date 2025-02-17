@@ -1,11 +1,13 @@
 package com.gerenciamentoclientes.clientes.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Table(name = "clientes")
 @Entity
-@Data
+@Getter
+@Setter
 public class ClienteEntity {
 
     @Id

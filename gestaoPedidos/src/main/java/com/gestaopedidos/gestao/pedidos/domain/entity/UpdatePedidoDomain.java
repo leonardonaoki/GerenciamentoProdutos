@@ -2,13 +2,13 @@ package com.gestaopedidos.gestao.pedidos.domain.entity;
 
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Getter
-@Setter
 public class UpdatePedidoDomain {
-    public StatusEnum status;
-    public String CEP;
-    public Double Latitude;
-    public Double Longitude;
+    private final StatusEnum status;
+    private final String cep;
+    private final Double latitude;
+    private final Double longitude;
 }

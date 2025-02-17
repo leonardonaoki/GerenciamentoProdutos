@@ -2,7 +2,6 @@ package com.gestaoclientes.clientes.app;
 
 import com.gerenciamentoclientes.clientes.app.CriarClienteUseCase;
 import com.gerenciamentoclientes.clientes.domain.dto.ClienteDTO;
-import com.gerenciamentoclientes.clientes.domain.dto.request.InsertAndUpdateClienteDTO;
 import com.gerenciamentoclientes.clientes.domain.entity.ClienteDomain;
 import com.gerenciamentoclientes.clientes.infrastructure.gateway.IClienteGateway;
 import org.junit.jupiter.api.BeforeEach;

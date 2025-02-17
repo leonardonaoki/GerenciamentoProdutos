@@ -76,9 +76,10 @@ public class ProdutoBatchConfig {
     }
     @Bean
     public ItemWriter<ProdutosEntity> itemWriter(DataSource dataSource){
+            ProdutoBatchCommands commands = new ProdutoBatchCommands();
             return new JdbcBatchItemWriterBuilder<ProdutosEntity>()
                     .dataSource(dataSource)
-                    .sql(ProdutoBatchCommands.insertProdutoCommand)
+                    .sql(commands.getInsertCommand())
                     .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                     .build();
     }

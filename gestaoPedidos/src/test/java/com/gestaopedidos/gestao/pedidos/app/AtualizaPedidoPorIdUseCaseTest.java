@@ -5,12 +5,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.doThrow;
 
-import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,11 +29,8 @@ class AtualizaPedidoPorIdUseCaseTest {
 
     @BeforeEach
     public void setUp() {
-        domain = new UpdatePedidoDomain();
-        domain.setStatus(StatusEnum.EM_CURSO);
-        domain.setCEP("01508001");
-        domain.setLatitude(-15d);
-        domain.setLongitude(30d);
+        domain = new UpdatePedidoDomain(StatusEnum.EM_CURSO,"01508001",
+                -15d,30d);
     }
 
     @Test
