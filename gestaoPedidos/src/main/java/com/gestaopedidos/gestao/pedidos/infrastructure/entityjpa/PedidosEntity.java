@@ -21,8 +21,9 @@ public class PedidosEntity {
     private Double latitude;
     private Double longitude;
     private BigDecimal precoFinal;
+    private long idEntregador;
 
     public PedidosEntity(){
-        this.status = StatusEnum.EM_CURSO.name();
+        this.status = StatusEnum.CONFIRMADO.name();
     }
 }

@@ -4,9 +4,11 @@ import com.gestaopedidos.gestao.pedidos.app.*;
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.LocalizacaoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.ListPedidosResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.responses.PedidosAndMessagesResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdateLocalizacaoPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.mapper.IPedidoMapper;
 import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
@@ -25,6 +27,10 @@ public class PedidosController implements IControllerDocumentation{
     private final ListarPedidoPorIdUseCase listarPedidoPorIdUseCase;
     private final CriarPedidoUseCase criarPedidoUseCase;
     private final AtualizaPedidoPorIdUseCase atualizaPedidoUseCase;
+    private final AtualizaEntregadorPedidoUseCase atualizaEntregadorPedidoUseCase;
+    private final AtualizaLocalizacaoUseCase atualizaLocalizacaoUseCase;
+    private final AtualizaStatusPedidoUseCase atualizaStatusPedidoUseCase;
+    private final BuscaPedidoPorCepUseCase buscaPedidoPorCepUseCase;
     private final IPedidoMapper pedidoMapper;
     @GetMapping()
     @Override
@@ -91,6 +97,57 @@ public class PedidosController implements IControllerDocumentation{
         UpdatePedidoDomain domain = pedidoMapper.toUpdateDomain(dto);
         try {
             atualizaPedidoUseCase.atualizaPedidoPorId(id, domain);
+            return ResponseEntity.noContent().build();
+        } catch (SystemBaseHandleException s) {
+            return ResponseEntity.internalServerError().body(
+                    new PedidosAndMessagesResponseDTO(
+                            null,
+                            HttpStatus.BAD_REQUEST.value(),
+                            s.getMessage()));
+        }
+    }
+    
+    @PatchMapping("/{id}/{idEntregador}")
+    @Override
+    public ResponseEntity<PedidosAndMessagesResponseDTO> atualizaEntregadorPedido(
+            @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) long idEntregador
+    ) {
+        try {
+           atualizaEntregadorPedidoUseCase.atualizaEngtregadorPedido(id, idEntregador);
+            return ResponseEntity.noContent().build();
+        } catch (SystemBaseHandleException s) {
+            return ResponseEntity.internalServerError().body(
+                    new PedidosAndMessagesResponseDTO(
+                            null,
+                            HttpStatus.BAD_REQUEST.value(),
+                            s.getMessage()));
+        }
+    }
+    
+    @PatchMapping("/{id}")
+    @Override
+    public ResponseEntity<PedidosAndMessagesResponseDTO> concluiEntregaPedido(
+            @PathVariable(value = "id", required = true) long id ) {
+        try {
+        	atualizaStatusPedidoUseCase.atualizaPedido(id);
+            return ResponseEntity.noContent().build();
+        } catch (SystemBaseHandleException s) {
+            return ResponseEntity.internalServerError().body(
+                    new PedidosAndMessagesResponseDTO(
+                            null,
+                            HttpStatus.BAD_REQUEST.value(),
+                            s.getMessage()));
+        }
+    }
+    
+    @PatchMapping("/{id}")
+    @Override
+    public ResponseEntity<PedidosAndMessagesResponseDTO> atualizaLocalizacao(
+            @PathVariable(value = "id", required = true) long id, @Valid @RequestBody(required = true) LocalizacaoDTO dto
+    ) {
+    	UpdateLocalizacaoPedidoDomain domain = pedidoMapper.toUpdateLocalizacao(dto);
+        try {
+        	atualizaLocalizacaoUseCase.atualizaLocalizacaoPedido(id, domain);
             return ResponseEntity.noContent().build();
         } catch (SystemBaseHandleException s) {
             return ResponseEntity.internalServerError().body(

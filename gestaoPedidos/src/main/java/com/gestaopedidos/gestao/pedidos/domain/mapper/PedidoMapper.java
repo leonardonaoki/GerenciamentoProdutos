@@ -2,8 +2,10 @@ package com.gestaopedidos.gestao.pedidos.domain.mapper;
 
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
+import com.gestaopedidos.gestao.pedidos.domain.dto.request.LocalizacaoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.UpdatePedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdateLocalizacaoPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.infrastructure.entityjpa.PedidosEntity;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IClienteGateway;
@@ -54,5 +56,11 @@ public class PedidoMapper implements IPedidoMapper{
     public UpdatePedidoDomain toUpdateDomain(UpdatePedidoDTO updatePedidoDTO) {
         return new UpdatePedidoDomain(updatePedidoDTO.status(), updatePedidoDTO.CEP(),
                 updatePedidoDTO.Latitude(), updatePedidoDTO.Longitude());
+    }
+    
+    
+    @Override
+    public UpdateLocalizacaoPedidoDomain toUpdateLocalizacao (LocalizacaoDTO localizacaoDTO) {
+    	return new UpdateLocalizacaoPedidoDomain(localizacaoDTO.latitude(),localizacaoDTO.longitute());
     }
 }

@@ -3,6 +3,7 @@ package com.gestaopedidos.gestao.pedidos.infrastructure.gateway;
 import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.ProdutoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.entity.InsertPedidoDomain;
+import com.gestaopedidos.gestao.pedidos.domain.entity.UpdateLocalizacaoPedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.entity.UpdatePedidoDomain;
 import com.gestaopedidos.gestao.pedidos.domain.enums.AcaoEstoqueEnum;
 import com.gestaopedidos.gestao.pedidos.domain.enums.StatusEnum;
@@ -97,12 +98,9 @@ public class PedidoGateway implements IPedidoGateway {
 
     @Override
     public void atualizarStatusPedidoPorId(long id, UpdatePedidoDomain domain) throws SystemBaseHandleException {
-        PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
+        PedidosEntity pedidoEncontrado = buscaPedidoId(id);
 
-        if(pedidoEncontrado.getStatus().equals(StatusEnum.CANCELADO.name()) ||
-                pedidoEncontrado.getStatus().equals(StatusEnum.CONCLUIDO.name()))
-            throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
+        validaStatus(pedidoEncontrado);
 
         pedidoEncontrado.setStatus(domain.getStatus().name());
         pedidoEncontrado.setCep(domain.getCep());
@@ -119,4 +117,47 @@ public class PedidoGateway implements IPedidoGateway {
             estoqueProducer.atualizaEstoque(listaProdutos, AcaoEstoqueEnum.REPOR_ESTOQUE);
         }
     }
+
+    @Override
+    public void atualizarLocalizacao(long id, UpdateLocalizacaoPedidoDomain domain) throws SystemBaseHandleException {
+        PedidosEntity pedidoEncontrado = buscaPedidoId(id);
+
+        validaStatus(pedidoEncontrado);
+        pedidoEncontrado.setLatitude(domain.getLatitude());
+        pedidoEncontrado.setLongitude(domain.getLongitude());
+        pedidoRepository.save(pedidoEncontrado);
+    }
+    @Override
+    public void atualizarStatusEntregue(long id) throws SystemBaseHandleException {
+        PedidosEntity pedidoEncontrado = buscaPedidoId(id);
+
+        validaStatus(pedidoEncontrado);
+
+        pedidoEncontrado.setStatus(StatusEnum.CONCLUIDO.name());
+        pedidoRepository.save(pedidoEncontrado);
+    }
+
+	
+    @Override
+    public void atualizarEntregadorPedido(long id, long idEntregador) throws SystemBaseHandleException {
+        PedidosEntity pedidoEncontrado = buscaPedidoId(id);
+
+        validaStatus(pedidoEncontrado);
+
+        pedidoEncontrado.setStatus(StatusEnum.EM_ROTA_DE_ENTREGA.name());
+        pedidoEncontrado.setIdEntregador(idEntregador);
+        pedidoRepository.save(pedidoEncontrado);
+    }
+    
+	private void validaStatus(PedidosEntity pedidoEncontrado) throws SystemBaseHandleException {
+		if(pedidoEncontrado.getStatus().equals(StatusEnum.CANCELADO.name()) ||
+                pedidoEncontrado.getStatus().equals(StatusEnum.CONCLUIDO.name()))
+            throw new SystemBaseHandleException("Não é possível alterar o status de um produto cancelado ou concluido");
+	}
+	
+	private PedidosEntity buscaPedidoId(long id) {
+		PedidosEntity pedidoEncontrado = pedidoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
+		return pedidoEncontrado;
+	}
 }

@@ -145,9 +145,9 @@ class PedidosControllerTest {
     }
     @Test
     void testAtualizarPedidoPorId() throws Exception {
-        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.EM_CURSO,"12345-678",
+        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.CONFIRMADO,"12345-678",
                 12.345678,98.765432);
-        UpdatePedidoDomain updatePedidoDomain = new UpdatePedidoDomain(StatusEnum.EM_CURSO,"12345-678",
+        UpdatePedidoDomain updatePedidoDomain = new UpdatePedidoDomain(StatusEnum.CONFIRMADO,"12345-678",
                 12.345678,98.765432);
         when(pedidoMapper.toUpdateDomain(any(UpdatePedidoDTO.class))).thenReturn(updatePedidoDomain);
         doNothing().when(atualizaPedidoUseCase).atualizaPedidoPorId(any(Long.class),any(UpdatePedidoDomain.class));
@@ -158,9 +158,9 @@ class PedidosControllerTest {
     }
     @Test
     void atualizarProdutoPorIdDeveExibirSystemBaseExceptionCorretamente() throws Exception {
-        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.EM_CURSO,"12345-678",
+        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.CONFIRMADO,"12345-678",
                 12.345678,98.765432);
-        UpdatePedidoDomain updatePedidoDomain = new UpdatePedidoDomain(StatusEnum.EM_CURSO,"12345-678",
+        UpdatePedidoDomain updatePedidoDomain = new UpdatePedidoDomain(StatusEnum.CONFIRMADO,"12345-678",
                 12.345678,98.765432);
         when(pedidoMapper.toUpdateDomain(any(UpdatePedidoDTO.class))).thenReturn(updatePedidoDomain);
         doThrow(new SystemBaseHandleException("Erro")).when(atualizaPedidoUseCase).atualizaPedidoPorId(anyLong(),any(UpdatePedidoDomain.class));

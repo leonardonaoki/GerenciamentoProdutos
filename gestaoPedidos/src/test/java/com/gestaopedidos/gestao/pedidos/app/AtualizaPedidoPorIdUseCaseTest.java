@@ -29,7 +29,7 @@ class AtualizaPedidoPorIdUseCaseTest {
 
     @BeforeEach
     public void setUp() {
-        domain = new UpdatePedidoDomain(StatusEnum.EM_CURSO,"01508001",
+        domain = new UpdatePedidoDomain(StatusEnum.CONFIRMADO,"01508001",
                 -15d,30d);
     }
 

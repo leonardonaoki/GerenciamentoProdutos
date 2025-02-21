@@ -252,7 +252,7 @@ class PedidoGatewayTest {
         long id = 1L;
         UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
-        pedido.setStatus(StatusEnum.EM_CURSO.name());
+        pedido.setStatus(StatusEnum.CONFIRMADO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
         when(domain.getStatus()).thenReturn(StatusEnum.CONCLUIDO);
 
@@ -267,7 +267,7 @@ class PedidoGatewayTest {
         long id = 1L;
         UpdatePedidoDomain domain = mock(UpdatePedidoDomain.class);
         PedidosEntity pedido = new PedidosEntity();
-        pedido.setStatus(StatusEnum.EM_CURSO.name());
+        pedido.setStatus(StatusEnum.CONFIRMADO.name());
         when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedido));
         when(domain.getStatus()).thenReturn(StatusEnum.CANCELADO);
         List<ItensPedidosEntity> listaItens = new ArrayList<>();

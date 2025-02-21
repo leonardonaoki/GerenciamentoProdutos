@@ -90,10 +90,10 @@ class PedidoMapperTest {
         produto1.setIdProduto(1L);
         produto1.setQuantidadeDesejada(300L);
 
-        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.EM_CURSO,"12345-678",12.345678,98.765432);
+        UpdatePedidoDTO dto = new UpdatePedidoDTO(StatusEnum.CONFIRMADO,"12345-678",12.345678,98.765432);
         UpdatePedidoDomain domain = pedidoMapper.toUpdateDomain(dto);
 
-        assertEquals(StatusEnum.EM_CURSO, domain.getStatus());
+        assertEquals(StatusEnum.CONFIRMADO, domain.getStatus());
         assertEquals("12345-678", domain.getCep());
         assertEquals(12.345678, domain.getLatitude());
         assertEquals(98.765432, domain.getLongitude());

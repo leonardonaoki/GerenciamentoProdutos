@@ -12,7 +12,7 @@ class PedidosEntityTest {
     @Test
     void testDefaultStatus() {
         PedidosEntity pedidosEntity = new PedidosEntity();
-        assertEquals(StatusEnum.EM_CURSO.name(), pedidosEntity.getStatus());
+        assertEquals(StatusEnum.CONFIRMADO.name(), pedidosEntity.getStatus());
     }
 
     @Test
