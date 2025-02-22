@@ -1,5 +1,6 @@
 package com.gestaopedidos.gestao.pedidos.infrastructure.controller;
 
+import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.ResponseDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.InsertPedidoDTO;
 import com.gestaopedidos.gestao.pedidos.domain.dto.request.LocalizacaoDTO;
@@ -11,6 +12,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -239,4 +243,8 @@ public interface IControllerDocumentation {
             }
     )
 	ResponseEntity<PedidosAndMessagesResponseDTO> atualizaEntregadorPedido(@PathVariable(value = "id", required = true) long id, @Valid long idEntregador);
+
+	List<PedidoDTO> buscaPedidoEmAberto(long idEntregador);
+
+	List<Long> buscaPedidoPorCep(String cep);
 }

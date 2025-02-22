@@ -8,6 +8,7 @@ import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface IPedidoGateway {
     Page<PedidoDTO> listarPedidos(int offset, int limit);
@@ -17,4 +18,6 @@ public interface IPedidoGateway {
 	void atualizarEntregadorPedido(long id, long idEntregador) throws SystemBaseHandleException;
 	void atualizarStatusEntregue(long id) throws SystemBaseHandleException;
 	void atualizarLocalizacao(long id, UpdateLocalizacaoPedidoDomain domain) throws SystemBaseHandleException;
+	List<PedidoDTO> buscaPedidosEmAbertos(long idEntregador);
+	List<Long> buscaPorCep(String cep);
 }

@@ -4,18 +4,18 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.gestaopedidos.gestao.pedidos.domain.dto.PedidoDTO;
 import com.gestaopedidos.gestao.pedidos.infrastructure.gateway.IPedidoGateway;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class BuscaPedidoPorCepUseCase {
+public class BuscarPedidoAbertoUseCase {
 
     private final IPedidoGateway pedidoGateway;
-    
-    public List<Long> buscaPedidoPorCep(String cep) {
-    	return pedidoGateway.buscaPorCep(cep);
-    }
 
+    public List<PedidoDTO> buscaPedidoAberto(long idEntregador){
+    	return pedidoGateway.buscaPedidosEmAbertos(idEntregador);
+    }
 }

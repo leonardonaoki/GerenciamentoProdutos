@@ -15,6 +15,8 @@ import com.gestaopedidos.gestao.pedidos.exception.SystemBaseHandleException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,7 @@ public class PedidosController implements IControllerDocumentation{
     private final AtualizaLocalizacaoUseCase atualizaLocalizacaoUseCase;
     private final AtualizaStatusPedidoUseCase atualizaStatusPedidoUseCase;
     private final BuscaPedidoPorCepUseCase buscaPedidoPorCepUseCase;
+    private final BuscarPedidoAbertoUseCase buscarPedidoAbertoUseCase;
     private final IPedidoMapper pedidoMapper;
     @GetMapping()
     @Override
@@ -156,5 +159,17 @@ public class PedidosController implements IControllerDocumentation{
                             HttpStatus.BAD_REQUEST.value(),
                             s.getMessage()));
         }
+    }
+    
+    @PatchMapping("/{idEntregador}")
+    @Override
+    public List<PedidoDTO> buscaPedidoEmAberto(@PathVariable(value = "idEntregador", required = true) long idEntregador) {
+    	return buscarPedidoAbertoUseCase.buscaPedidoAberto(idEntregador);
+    }
+    
+    @PatchMapping("/{cep}")
+    @Override
+    public List<Long> buscaPedidoPorCep(@PathVariable(value = "cep", required = true) String cep  ) {
+    	return buscaPedidoPorCepUseCase.buscaPedidoPorCep(cep);
     }
 }

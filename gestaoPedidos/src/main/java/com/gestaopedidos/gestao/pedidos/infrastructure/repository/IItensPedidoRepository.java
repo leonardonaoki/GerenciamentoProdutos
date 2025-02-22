@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface IItensPedidoRepository extends JpaRepository<ItensPedidosEntity,Long>, JpaSpecificationExecutor<ItensPedidosEntity> {
     List<ItensPedidosEntity> findByIdPedido(long idPedido);
+    
 }

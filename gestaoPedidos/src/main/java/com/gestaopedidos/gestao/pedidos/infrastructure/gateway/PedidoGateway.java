@@ -160,4 +160,34 @@ public class PedidoGateway implements IPedidoGateway {
                 .orElseThrow(() -> new EntityNotFoundException(ERROR_MESSAGE + id));
 		return pedidoEncontrado;
 	}
+	
+	@Override
+    public List <PedidoDTO> buscaPedidosEmAbertos(long idEntregador) {
+        List<PedidosEntity> listaPedidos = pedidoRepository.findByIdEntregador(idEntregador);
+        List <PedidoDTO> listDto = new ArrayList<PedidoDTO>();
+        for(var pedido: listaPedidos) {
+        	PedidoDTO dto = new PedidoDTO();
+        	if(StatusEnum.EM_ROTA_DE_ENTREGA.name().equals(pedido.getStatus())) {
+        		dto.setCep(pedido.getCep());
+        		dto.setIdPedido(pedido.getIdPedido());
+        		listDto.add(dto);
+        	}
+        }
+        
+        return listDto;
+    }
+	
+	@Override
+    public List <Long> buscaPorCep(String cep) {
+		List<PedidosEntity> listaPedidos = pedidoRepository.findByCep(cep);
+        List <Long> listLong = new ArrayList<Long>();
+        for(var pedido: listaPedidos) {
+        	if(StatusEnum.CONFIRMADO.name().equals(pedido.getStatus())) {
+        		listLong.add(pedido.getIdPedido());
+        	}
+        }
+        
+        return listLong;
+
+    }
 }
