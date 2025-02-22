@@ -13,7 +13,7 @@ public class CadastraEntregadorUseCase {
 
 	private final IEntregadorGateway entregadorGateway;
 
-	private void inserirEntregador (InsertEntregadorDTO dto) {
+	public void inserirEntregador (InsertEntregadorDTO dto) {
 		entregadorGateway.inserirEntregador(dto);
 	}
 }
