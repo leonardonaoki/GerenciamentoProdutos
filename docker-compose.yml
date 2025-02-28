@@ -56,6 +56,22 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
     networks:
       - sistemapedidos-network
+  applogisticaentrega:
+    container_name: appLogisticaEntrega
+    build:
+      context: ./logisticaEntrega
+      dockerfile: Dockerfile
+    ports:
+      - 8083:8083
+    depends_on:
+      - appgestaopedidos
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sistemapedidosdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - sistemapedidos-network
   db:
     container_name: postgresdb
     restart: always

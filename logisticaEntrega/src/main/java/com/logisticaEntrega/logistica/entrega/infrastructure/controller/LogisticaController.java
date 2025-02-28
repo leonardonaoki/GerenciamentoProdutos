@@ -34,7 +34,7 @@ public class LogisticaController implements IControllerDocumentationLogistica {
 
 	private final IEntregadorMapper entregadorMapper;
 	
-	@PatchMapping("/{idPedido}")
+	@PatchMapping("/{idPedido}/localizacao")
     @Override
 	public void atualizaLocalizacaoPedido(@PathVariable(value = "idPedido", required = true) long idPedido, @Valid @RequestBody(required = true) RequisicaoGestaoPedidoDTO dto) {
 		atualizaLocalizacaoPedidoUseCase.atualizaLocalizaPedido(idPedido, dto);
